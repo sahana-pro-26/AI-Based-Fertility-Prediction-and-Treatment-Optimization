@@ -115,3 +115,37 @@ nav ul li a:hover{
     text-shadow:
     0 0 10px rgba(255,77,166,0.8);
 }
+#features{
+
+    margin-top:30px;
+
+    display:none;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+#features a{
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:22px;
+
+    background:rgba(255,255,255,0.1);
+
+    padding:15px 30px;
+
+    border-radius:15px;
+
+    transition:0.3s;
+}
+
+#features a:hover{
+
+    background:#ff4da6;
+
+    transform:scale(1.05);
+}
