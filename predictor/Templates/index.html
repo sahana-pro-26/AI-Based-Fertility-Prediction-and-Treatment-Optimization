@@ -12,23 +12,7 @@
 
 <body style="background-color:#0f172a; color:#f9a8d4; text-align:center; padding-top:100px;">
 
-     <nav>
-
-        <h2>FertiCare AI</h2>
-
-        <ul>
-
-             <li><a href="/">Home</a></li>
-             <li><a href="/pcos/">PCOS Detection</a></li>
-             <li><a href="/ivf/">IVF Prediction</a></li>
-             <li><a href="/score/">Fertility Score</a></li>
-             <li><a href="/recommend/">Recommendations</a></li>
-
-        </ul>
-
-
-    </nav>
-
+     
     <div class="container">
 
         <h1> AI-Based Fertility Prediction & Treatment Optimization</h1>
@@ -37,11 +21,11 @@
             PCOS Detection • IVF Prediction • Fertility Score • Treatment Recommendation
         </p>
 
-         <button onclick="showFeatures()">
-        Get Started
-    </button>
+         <button onclick="showFeatures()" class="btn">
+    Get Started
 
-    <div id="features">
+</button>
+    <div id="features" style="display:none;">
 
         <a href="/pcos/">PCOS Detection</a>
 
@@ -58,7 +42,7 @@
 
     function showFeatures(){
 
-         document.getElementById("features").style.display="flex";
+         document.getElementById("features").style.display="block";
 
     }
 

@@ -1,40 +1,160 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PCOS Detection</title>
+<title>PCOS Prediction</title>
 
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#ffb6d9,#c9b6ff);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:white;
+    width:380px;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#ff4da6;
+    margin-bottom:25px;
+}
+
+.pcos-form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.pcos-form input,
+.pcos-form select{
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#f3f3f3;
+    font-size:16px;
+    outline:none;
+}
+
+.pcos-form button{
+    padding:15px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(135deg,#ff4da6,#8b5cf6);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.pcos-form button:hover{
+    transform:scale(1.03);
+}
+
+.result{
+    text-align:center;
+    margin-top:20px;
+    font-size:20px;
+    font-weight:bold;
+    color:#8b5cf6;
+}
+
+</style>
 </head>
 
-<body style="background-color:#0f172a; color:white; font-family:Arial; text-align:center;">
+<body>
 
-    <h1 style="color:#f9a8d4;">
-        PCOS Detection System
-    </h1>
+<div class="container">
 
-    <form>
+    <h1>PCOS Prediction</h1>
 
-        <input type="text" placeholder="Enter Age"><br><br>
+    <form class="pcos-form" id="pcosForm">
 
-        <input type="text" placeholder="Enter Weight"><br><br>
+        <input type="number" placeholder="Enter Age" required>
 
-        <input type="text" placeholder="Irregular Periods"><br><br>
+        <input type="number" placeholder="Enter Weight" required>
 
-        <input type="text" placeholder="Acne Problem"><br><br>
+        <select required>
+            <option value="" disabled selected>
+                Irregular Periods
+            </option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
 
-        <input type="text" placeholder="Hair Loss"><br><br>
+        <select required>
+            <option value="" disabled selected>
+                Acne Problem
+            </option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
 
-        <input type="text" placeholder="Excess Facial Hair"><br><br>
+        <select required>
+            <option value="" disabled selected>
+                Hair Loss
+            </option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
 
-        <input type="text" placeholder="Mood Swings"><br><br>
+        <select required>
+            <option value="" disabled selected>
+                Excess Facial Hair
+            </option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
 
-        <button>
+        <select required>
+            <option value="" disabled selected>
+                Mood Swings
+            </option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
+
+        <button type="submit">
             Predict
         </button>
 
     </form>
 
-</body>
+    <div class="result" id="result"></div>
+
 
 </html> 
+
+</div>
+
+<script>
+
+document.getElementById("pcosForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    document.getElementById("result")
+    .innerHTML = "Prediction Submitted Successfully!";
+
+});
+
+</script>
+
+</body>
+</html>
+
