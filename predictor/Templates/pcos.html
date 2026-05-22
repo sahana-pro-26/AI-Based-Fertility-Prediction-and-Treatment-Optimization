@@ -5,19 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>PCOS Prediction</title>
-
+   {% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
 <style>
 
-body{
-    margin:0;
-    padding:0;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#ffb6d9,#c9b6ff);
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
 
 .container{
     background:white;
@@ -39,8 +30,25 @@ h1{
     gap:18px;
 }
 
+.pcos-form label{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-align:left;
+}
+
+.field-label{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:16px;
+    font-weight:700;
+    color:#333;
+}
+
 .pcos-form input,
 .pcos-form select{
+    width:100%;
     padding:15px;
     border:none;
     border-radius:12px;
@@ -80,53 +88,64 @@ h1{
 
 <div class="container">
 
-    <h1>PCOS Prediction</h1>
+    <h1>PCOS/PMOS Detection System</h1>
 
     <form class="pcos-form" id="pcosForm">
 
-        <input type="number" placeholder="Enter Age" required>
+        <label>
+            <span class="field-label">🔢 Age</span>
+            <input name="age" type="number" placeholder="Enter Age" required>
+        </label>
 
-        <input type="number" placeholder="Enter Weight" required>
+        <label>
+            <span class="field-label">⚖️ Weight</span>
+            <input name="weight" type="number" placeholder="Enter Weight" required>
+        </label>
 
-        <select required>
-            <option value="" disabled selected>
-                Irregular Periods
-            </option>
-            <option>Yes</option>
-            <option>No</option>
-        </select>
+        <label>
+            <span class="field-label">🔄 Irregular Period</span>
+            <select name="irregular_period" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
 
-        <select required>
-            <option value="" disabled selected>
-                Acne Problem
-            </option>
-            <option>Yes</option>
-            <option>No</option>
-        </select>
+        <label>
+            <span class="field-label">💧 Acne Problem</span>
+            <select name="acne_problem" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
 
-        <select required>
-            <option value="" disabled selected>
-                Hair Loss
-            </option>
-            <option>Yes</option>
-            <option>No</option>
-        </select>
+        <label>
+            <span class="field-label">🧑‍🦲 Hair Loss</span>
+            <select name="hair_loss" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
 
-        <select required>
-            <option value="" disabled selected>
-                Excess Facial Hair
-            </option>
-            <option>Yes</option>
-            <option>No</option>
-        </select>
+        <label>
+            <span class="field-label">🧔 Excess Facial Hair</span>
+            <select name="facial_hair" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
 
-        <select required>
-            <option value="" disabled selected>
-                Mood Swings
-            </option>
-            <option>Yes</option>
-            <option>No</option>
-        </select>
+        <label>
+            <span class="field-label">😕 Mood Swings</span>
+            <select name="mood_swings" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
 
         <button type="submit">
             Predict

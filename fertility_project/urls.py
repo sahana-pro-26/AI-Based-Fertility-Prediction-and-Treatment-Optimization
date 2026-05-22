@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-from predictor.views import home, pcos
+from predictor import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', home),
-    path('pcos/', pcos),
+    path('', views.home, name='home'),
+    path('pcos/', views.pcos, name='pcos'),
+    path('ivf/', views.ivf, name='ivf'),
+    path('score/', views.score, name='score'),
+    path('recommend/', views.recommend, name='recommend'),
 ]

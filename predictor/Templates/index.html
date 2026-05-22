@@ -8,10 +8,34 @@
 
     <link rel="stylesheet" href="{% static 'style.css' %}">
 
+    <style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("{% static 'bg.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+
 </head>
+<script>
 
-<body style="background-color:#0f172a; color:#f9a8d4; text-align:center; padding-top:100px;">
+function showFeatures(){
 
+    let panel = document.getElementById("features");
+
+    if(panel.style.display === "flex" || getComputedStyle(panel).display === "flex"){
+        panel.style.display = "none";
+    }
+
+    else{
+        panel.style.display = "flex";
+    }
+}
+
+</script>
+<body>
      
     <div class="container">
 
@@ -21,32 +45,26 @@
             PCOS Detection • IVF Prediction • Fertility Score • Treatment Recommendation
         </p>
 
-         <button onclick="showFeatures()" class="btn">
-    Get Started
+         
+    <div class="center-box">
 
-</button>
-    <div id="features" style="display:none;">
+    <button onclick="showFeatures()" class="main-btn">
+        Get Started
+    </button>
 
-        <a href="/pcos/">PCOS Detection</a>
+    <div id="features" class="feature-panel" style="display:none;">
 
-        <a href="/ivf/">IVF Prediction</a>
+        <a href="/pcos/" class="feature-btn">PCOS Detection</a>
 
-        <a href="/score/">Fertility Score</a>
+        <a href="/ivf/" class="feature-btn">IVF Prediction</a>
 
-        <a href="/recommend/">Recommendations</a>
+        <a href="/score/" class="feature-btn">Fertility Score</a>
+
+        <a href="/recommend/" class="feature-btn">Recommendations</a>
 
     </div>
 
-     </div>
-     <script>
-
-    function showFeatures(){
-
-         document.getElementById("features").style.display="block";
-
-    }
-
-     </script>
+</div>
 
 </body>
 
