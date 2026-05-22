@@ -11,16 +11,20 @@
 
 
 .container{
-    background:white;
+    background:#2B2C63;
     width:380px;
     padding:30px;
     border-radius:20px;
-    box-shadow:0 0 20px rgba(0,0,0,0.2);
+    border:2px solid #7A5AA6;
+    box-shadow:0 0 20px rgba(0,0,0,0.2), 0 0 40px rgba(122,90,166,0.6), inset 0 0 20px rgba(122,90,166,0.2);
 }
 
 h1{
     text-align:center;
-    color:#ff4da6;
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
     margin-bottom:25px;
 }
 
@@ -43,42 +47,100 @@ h1{
     gap:10px;
     font-size:16px;
     font-weight:700;
-    color:#333;
+    color:#B8B8D9;
 }
 
 .pcos-form input,
 .pcos-form select{
     width:100%;
     padding:15px;
-    border:none;
+    border:2px solid #7A5AA6;
     border-radius:12px;
-    background:#f3f3f3;
+    background:#2B2C63;
+    color:#B8B8D9;
     font-size:16px;
     outline:none;
+    box-shadow:0 0 10px rgba(122,90,166,0.4), inset 0 0 5px rgba(122,90,166,0.1);
+    transition:all 0.3s ease;
+}
+
+.pcos-form input:focus,
+.pcos-form select:focus{
+    box-shadow:0 0 20px rgba(122,90,166,0.8), inset 0 0 10px rgba(122,90,166,0.2);
 }
 
 .pcos-form button{
     padding:15px;
-    border:none;
+    border:2px solid #7A5AA6;
     border-radius:50px;
-    background:linear-gradient(135deg,#ff4da6,#8b5cf6);
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
     color:white;
     font-size:18px;
     font-weight:bold;
     cursor:pointer;
     transition:0.3s;
+    box-shadow:0 0 15px rgba(255,77,166,0.6);
 }
 
 .pcos-form button:hover{
     transform:scale(1.03);
+    box-shadow:0 0 25px rgba(122,90,166,0.9);
+}
+
+.pcos-form input::placeholder,
+.pcos-form select::placeholder{
+    color:#B8B8D9;
 }
 
 .result{
     text-align:center;
     margin-top:20px;
+    padding:20px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    display:none;
+    box-shadow:0 0 20px rgba(122,90,166,0.6);
+}
+
+.result.show{
+    display:block;
+    animation:slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity:0;
+        transform:translateY(-10px);
+    }
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.result.positive{
+    background:rgba(255, 77, 166, 0.2);
+    border:2px solid #ff4da6;
+    color:#ff4da6;
+}
+
+.result.negative{
+    background:rgba(122, 90, 166, 0.2);
+    border:2px solid #7A5AA6;
+    color:#B8B8D9;
+}
+
+.result-message{
     font-size:20px;
     font-weight:bold;
-    color:#8b5cf6;
+    margin-bottom:10px;
+}
+
+.result-confidence{
+    font-size:14px;
+    opacity:0.9;
+    margin-top:10px;
 }
 
 </style>
@@ -91,6 +153,7 @@ h1{
     <h1>PCOS/PMOS Detection System</h1>
 
     <form class="pcos-form" id="pcosForm">
+        {% csrf_token %}
 
         <label>
             <span class="field-label">🔢 Age</span>
@@ -103,11 +166,10 @@ h1{
         </label>
 
         <label>
-            <span class="field-label">🔄 Irregular Period</span>
+            <span class="field-label">🔄 Menstrual Cycle</span>
             <select name="irregular_period" required>
-                <option value="" disabled selected>Select an option</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="Regular">Regular</option>
+                <option value="Irregular">Irregular</option>
             </select>
         </label>
 
@@ -122,10 +184,17 @@ h1{
 
         <label>
             <span class="field-label">🧑‍🦲 Hair Loss</span>
-            <select name="hair_loss" required>
-                <option value="" disabled selected>Select an option</option>
+            <select name="hair_loss" id="hairLoss" required>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
+            </select>
+        </label>
+
+        <label id="hairLossDetailLabel" style="display:none;">
+            <span class="field-label">Hair Loss Severity</span>
+            <select name="hair_loss_detail" id="hairLossDetail">
+                <option value="Moderate">Moderate</option>
+                <option value="Excess">Excess</option>
             </select>
         </label>
 
@@ -162,14 +231,58 @@ h1{
 
 <script>
 
-document.getElementById("pcosForm")
-.addEventListener("submit", function(e){
+document.getElementById("hairLoss").addEventListener("change", function(){
+    const hairLossDetailLabel = document.getElementById("hairLossDetailLabel");
+    const hairLossDetail = document.getElementById("hairLossDetail");
+    
+    if(this.value === "Yes"){
+        hairLossDetailLabel.style.display = "flex";
+        hairLossDetail.required = true;
+    } else {
+        hairLossDetailLabel.style.display = "none";
+        hairLossDetail.required = false;
+        hairLossDetail.value = "";
+    }
+});
 
+document.getElementById("pcosForm").addEventListener("submit", function(e){
     e.preventDefault();
-
-    document.getElementById("result")
-    .innerHTML = "Prediction Submitted Successfully!";
-
+    
+    const formData = new FormData(this);
+    const resultDiv = document.getElementById("result");
+    
+    // Show loading state
+    resultDiv.innerHTML = "Analyzing...";
+    resultDiv.classList.add("show");
+    resultDiv.classList.remove("positive", "negative");
+    
+    fetch("{% url 'predict_pcos' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success'){
+            const isPCOS = data.has_pcos;
+            const message = data.message;
+            const confidence = data.confidence;
+            
+            resultDiv.innerHTML = `
+                <div class="result-message">${message}</div>
+                <div class="result-confidence">Confidence: ${confidence}%</div>
+            `;
+            
+            resultDiv.classList.add(isPCOS ? 'positive' : 'negative');
+        } else {
+            resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error: ${data.message}</div>`;
+            resultDiv.classList.add('negative');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error processing request</div>`;
+        resultDiv.classList.add('negative');
+    });
 });
 
 </script>
