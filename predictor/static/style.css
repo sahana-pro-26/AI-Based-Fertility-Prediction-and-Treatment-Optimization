@@ -186,3 +186,72 @@ p{
     transform:scale(1.05);
     border-color:#ff4da6;
 }
+
+/* Fertility score page styles */
+.score-container input,
+.score-container select{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.06);
+    background:rgba(255,255,255,0.03);
+    color:white;
+    font-size:16px;
+    outline:none;
+    box-sizing:border-box;
+}
+
+.score-container button{
+    padding:14px 28px;
+    border-radius:999px;
+    border:none;
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 8px 30px rgba(184,92,246,0.18);
+}
+
+.score-container p{color:#efe9fb;font-size:16px}
+
+/* Result card tweaks */
+.result-card{color:#fff}
+
+@media (max-width:600px){
+    .score-container{padding:20px;margin:20px}
+}
+
+.input-label{
+    display:block;
+    font-size:13px;
+    color:rgba(255,255,255,0.85);
+    margin-bottom:8px;
+    font-weight:600;
+    text-transform:none;
+}
+
+/* Match IVF page wording colors for the fertility score page only */
+.score-container .input-label{
+    /* pink-to-purple gradient text like IVF labels */
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    font-weight:700;
+    color:inherit; /* fallback */
+}
+
+.score-container input,
+.score-container select{
+    color:#ff4da6; /* input/select text color to match IVF inputs */
+}
+
+.score-container input::placeholder{
+    color:#ff4da6;
+    opacity:0.8;
+}
+
+.score-container option{
+    background:#2B2C63;
+    color:#ff4da6;
+}

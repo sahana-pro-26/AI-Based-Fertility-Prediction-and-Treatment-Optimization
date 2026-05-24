@@ -109,6 +109,135 @@ def ivf(request):
     return render(request, 'ivf.html', {'form_data': form_data, 'prediction': prediction})
 
 def score(request):
+    # Render the fertility score page on GET.
+    # Handle AJAX POST requests that return a JSON fertility score.
+    if request.method == 'POST':
+        try:
+            # Collect form data
+            age = request.POST.get('age')
+            weight = request.POST.get('weight')
+            height = request.POST.get('height')
+            smoking = request.POST.get('smoking', 'non-smoker')
+            alcohol = request.POST.get('alcohol', 'never')
+            exercise = request.POST.get('exercise', 'Moderate')
+            menstrual_cycle = request.POST.get('menstrual_cycle', 'Regular')
+            pcos = request.POST.get('pcos', 'No')
+            previous_pregnancy = request.POST.get('previous_pregnancy', 'No')
+            partner_issues = request.POST.get('partner_issues', 'No')
+            fertility_test = request.POST.get('fertility_test', 'No')
+            medical_indicator = request.POST.get('medical_indicator', 'None')
+            amh_level = request.POST.get('amh_level', '')
+            thyroid_status = request.POST.get('thyroid_status', 'None')
+            diabetes_status = request.POST.get('diabetes_status', 'None')
+
+            # Normalize empty-string selects to defaults
+            if not smoking:
+                smoking = 'non-smoker'
+            if not alcohol:
+                alcohol = 'never'
+            if not exercise:
+                exercise = 'Moderate'
+            if not menstrual_cycle:
+                menstrual_cycle = 'Regular'
+            if not pcos:
+                pcos = 'No'
+            if not previous_pregnancy:
+                previous_pregnancy = 'No'
+            if not partner_issues:
+                partner_issues = 'No'
+            if not fertility_test:
+                fertility_test = 'No'
+            if not medical_indicator:
+                medical_indicator = 'None'
+
+            # Scoring logic (simple, extensible)
+            points = 0
+            total = 11
+
+            try:
+                age_val = int(age) if age not in (None, '') else None
+            except ValueError:
+                age_val = None
+
+            if age_val is not None and age_val < 35:
+                points += 1
+
+            # BMI check
+            try:
+                w = float(weight) if weight not in (None, '') else None
+                h = float(height) if height not in (None, '') else None
+                if w and h:
+                    h_m = h / 100.0 if h > 3 else h
+                    bmi = w / (h_m * h_m) if h_m > 0 else None
+                    if bmi and 18.5 <= bmi <= 24.9:
+                        points += 1
+            except Exception:
+                pass
+
+            # Smoking scoring: reward non-smokers and former smokers
+            if str(smoking).lower() in ('non-smoker', 'former'):
+                points += 1
+            # Alcohol scoring: reward never or occasional intake
+            if str(alcohol).lower() in ('never', 'occasionally'):
+                points += 1
+            if exercise in ('Active', 'Moderate'):
+                points += 1
+            if menstrual_cycle == 'Regular':
+                points += 1
+            if pcos == 'No':
+                points += 1
+            if previous_pregnancy == 'Yes':
+                points += 1
+            if partner_issues == 'No':
+                points += 1
+            if fertility_test == 'Yes':
+                points += 1
+
+            if medical_indicator == 'AMH':
+                try:
+                    amh_val = float(amh_level) if amh_level not in (None, '') else None
+                except ValueError:
+                    amh_val = None
+                if amh_val is not None and amh_val >= 1.0:
+                    points += 1
+            elif medical_indicator == 'Thyroid':
+                if thyroid_status == 'Normal':
+                    points += 1
+            elif medical_indicator == 'Diabetes':
+                if diabetes_status == 'NoHistory':
+                    points += 1
+
+            score_percent = int((points / float(total)) * 100)
+
+            if score_percent <= 40:
+                category = 'Low Fertility'
+                range_label = '0–40 → Low Fertility'
+                color = '#ef4444'
+                message = 'Your fertility score is low; consider specialist guidance and lifestyle support.'
+            elif score_percent <= 70:
+                category = 'Moderate Fertility'
+                range_label = '41–70 → Moderate Fertility'
+                color = '#f59e0b'
+                message = 'Your fertility score is moderate; maintain healthy habits and discuss next steps with a provider.'
+            else:
+                category = 'High Fertility'
+                range_label = '71–100 → High Fertility'
+                color = '#22c55e'
+                message = 'Your fertility score is high; current indicators look favorable.'
+
+            return JsonResponse({
+                'status': 'success',
+                'score': score_percent,
+                'points': points,
+                'total': total,
+                'category': category,
+                'range_label': range_label,
+                'color': color,
+                'message': message
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
     return render(request, 'score.html')
 
 def recommend(request):

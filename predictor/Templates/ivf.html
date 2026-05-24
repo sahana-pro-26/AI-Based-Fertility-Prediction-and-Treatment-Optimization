@@ -19,206 +19,227 @@
             background-position:center;
             display:flex;
             flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            min-height:100vh;
-        }
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>IVF Prediction Form</title>
 
-        h1{
-            text-align:center;
-            margin-bottom:30px;
-            font-size:32px;
-            background:linear-gradient(135deg,#ff4da6,#b85cf6);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-            background-clip:text;
-            z-index:10;
-        }
+                {% load static %}
+                <link rel="stylesheet" href="{% static 'style.css' %}">
+                <style>
 
-        .container{
-            width:450px;
-            background:rgba(30, 95, 116, 0.15);
-            padding:30px;
-            border-radius:20px;
-            border:1px solid rgba(30, 95, 116, 0.3);
-            box-shadow:0 0 20px rgba(30, 95, 116, 0.2), inset 0 0 20px rgba(30, 95, 116, 0.1);
-            color:white;
-            backdrop-filter:blur(10px);
-        }
+                    body{
+                        margin:0;
+                        padding:0;
+                        font-family: Arial, sans-serif;
+                        background: 
+                        url("{% static 'bg.png' %}");
+                        background-size:cover;
+                        background-position:center;
+                        display:flex;
+                        flex-direction:column;
+                        justify-content:center;
+                        align-items:center;
+                        min-height:100vh;
+                    }
 
-        label{
-            display:block;
-            margin-top:15px;
-            margin-bottom:5px;
-            font-size:18px;
-            background:linear-gradient(135deg,#ff4da6,#b85cf6);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-            background-clip:text;
-            font-weight:700;
-        }
+                    h1{
+                        text-align:center;
+                        margin-bottom:30px;
+                        font-size:32px;
+                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
+                        -webkit-background-clip:text;
+                        -webkit-text-fill-color:transparent;
+                        background-clip:text;
+                        z-index:10;
+                    }
 
-        input, select{
-            width:100%;
-            padding:12px;
-            border:1px solid rgba(30, 95, 116, 0.4);
-            border-radius:10px;
-            background:rgba(30, 95, 116, 0.1);
-            background:linear-gradient(135deg, rgba(255,77,166,0.1), rgba(184,92,246,0.1));
-            color:#ff4da6;
-            font-size:18px;
-            font-weight:700;
-            box-shadow:0 0 10px rgba(30, 95, 116, 0.2), inset 0 0 5px rgba(30, 95, 116, 0.1);
-            transition:all 0.3s ease;
-        }
+                    .container{
+                        width:450px;
+                        background:rgba(30, 95, 116, 0.15);
+                        padding:30px;
+                        border-radius:20px;
+                        border:1px solid rgba(30, 95, 116, 0.3);
+                        box-shadow:0 0 20px rgba(30, 95, 116, 0.2), inset 0 0 20px rgba(30, 95, 116, 0.1);
+                        color:white;
+                        backdrop-filter:blur(10px);
+                    }
 
-        input::placeholder{
-            color:#ff4da6;
-            opacity:0.7;
-        }
+                    label{
+                        display:block;
+                        margin-top:15px;
+                        margin-bottom:5px;
+                        font-size:18px;
+                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
+                        -webkit-background-clip:text;
+                        -webkit-text-fill-color:transparent;
+                        background-clip:text;
+                        font-weight:700;
+                    }
 
-        select::placeholder,
-        option[value=""],
-        option:disabled{
-            color:#B8B8D9;
-        }
+                    input, select{
+                        width:100%;
+                        padding:12px;
+                        border:1px solid rgba(30, 95, 116, 0.4);
+                        border-radius:10px;
+                        background:rgba(30, 95, 116, 0.1);
+                        background:linear-gradient(135deg, rgba(255,77,166,0.1), rgba(184,92,246,0.1));
+                        color:#ff4da6;
+                        font-size:18px;
+                        font-weight:700;
+                        box-shadow:0 0 10px rgba(30, 95, 116, 0.2), inset 0 0 5px rgba(30, 95, 116, 0.1);
+                        transition:all 0.3s ease;
+                    }
 
-        option{
-            background:#2B2C63;
-            color:#ff4da6;
-        }
+                    input::placeholder{
+                        color:#ff4da6;
+                        opacity:0.7;
+                    }
 
-        input:focus,
-        select:focus{
-            outline:none;
-            background:rgba(30, 95, 116, 0.2);
-            box-shadow:0 0 20px rgba(30, 95, 116, 0.6), inset 0 0 10px rgba(30, 95, 116, 0.2);
-            border-color:rgba(30, 95, 116, 0.6);
-        }
+                    select::placeholder,
+                    option[value=""],
+                    option:disabled{
+                        color:#B8B8D9;
+                    }
 
-        button{
-            width:100%;
-            padding:14px;
-            margin-top:25px;
-            border:2px solid #ff4da6;
-            border-radius:50px;
-            background:linear-gradient(135deg,#ff4da6,#b85cf6);
-            color:white;
-            font-size:16px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
-            box-shadow:0 0 15px rgba(255,77,166,0.6);
-        }
+                    option{
+                        background:#2B2C63;
+                        color:#ff4da6;
+                    }
 
-        button:hover{
-            transform:scale(1.03);
-            box-shadow:0 0 25px rgba(255,77,166,0.9);
-        }
+                    input:focus,
+                    select:focus{
+                        outline:none;
+                        background:rgba(30, 95, 116, 0.2);
+                        box-shadow:0 0 20px rgba(30, 95, 116, 0.6), inset 0 0 10px rgba(30, 95, 116, 0.2);
+                        border-color:rgba(30, 95, 116, 0.6);
+                    }
 
-    </style>
-</head>
-<body>
+                    button{
+                        width:100%;
+                        padding:14px;
+                        margin-top:25px;
+                        border:2px solid #ff4da6;
+                        border-radius:50px;
+                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
+                        color:white;
+                        font-size:16px;
+                        font-weight:bold;
+                        cursor:pointer;
+                        transition:0.3s;
+                        box-shadow:0 0 15px rgba(255,77,166,0.6);
+                    }
 
-<h1>IVF Prediction Form</h1>
+                    button:hover{
+                        transform:scale(1.03);
+                        box-shadow:0 0 25px rgba(255,77,166,0.9);
+                    }
 
-<div class="container">
+                </style>
+            </head>
+            <body>
 
-    <form method="POST" action="">
-        {% csrf_token %}
+            <h1>IVF Prediction Form</h1>
 
-        <label>Age</label>
-        <input type="number" name="age" required value="{{ form_data.age|default:'' }}">
+            <div class="container">
 
-        <label>Weight (kg)</label>
-        <input type="number" name="weight" required value="{{ form_data.weight|default:'' }}">
+                <form method="POST" action="">
+                    {% csrf_token %}
 
-        <label>Height (cm)</label>
-        <input type="number" name="height" required value="{{ form_data.height|default:'' }}">
+                    <label>Age</label>
+                    <input type="number" name="age" required value="{{ form_data.age|default:'' }}">
 
-        <label>Irregular Periods</label>
-        <select name="periods">
-            <option value="" disabled {% if not form_data.periods %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.periods == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.periods == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>Weight (kg)</label>
+                    <input type="number" name="weight" required value="{{ form_data.weight|default:'' }}">
 
-        <label>PCOS</label>
-        <select name="pcos">
-            <option value="" disabled {% if not form_data.pcos %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.pcos == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.pcos == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>Height (cm)</label>
+                    <input type="number" name="height" required value="{{ form_data.height|default:'' }}">
 
-        <label>Stress Level</label>
-        <select name="stress">
-            <option value="" disabled {% if not form_data.stress %}selected{% endif %}>Select an option</option>
-            <option value="Low" {% if form_data.stress == 'Low' %}selected{% endif %}>Low</option>
-            <option value="Medium" {% if form_data.stress == 'Medium' %}selected{% endif %}>Medium</option>
-            <option value="High" {% if form_data.stress == 'High' %}selected{% endif %}>High</option>
-        </select>
+                    <label>Irregular Periods</label>
+                    <select name="periods">
+                        <option value="" disabled {% if not form_data.periods %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.periods == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.periods == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-        <label>Smoking / Alcohol</label>
-        <select name="smoking">
-            <option value="" disabled {% if not form_data.smoking %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.smoking == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.smoking == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>PCOS</label>
+                    <select name="pcos">
+                        <option value="" disabled {% if not form_data.pcos %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.pcos == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.pcos == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-        <label>Previous Pregnancy</label>
-        <select name="pregnancy">
-            <option value="" disabled {% if not form_data.pregnancy %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.pregnancy == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.pregnancy == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>Stress Level</label>
+                    <select name="stress">
+                        <option value="" disabled {% if not form_data.stress %}selected{% endif %}>Select an option</option>
+                        <option value="Low" {% if form_data.stress == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if form_data.stress == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if form_data.stress == 'High' %}selected{% endif %}>High</option>
+                    </select>
 
-        <label>Years Trying to Conceive</label>
-        <input type="number" name="years" value="{{ form_data.years|default:'' }}">
+                    <label>Smoking / Alcohol</label>
+                    <select name="smoking">
+                        <option value="" disabled {% if not form_data.smoking %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.smoking == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.smoking == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-        <label>Lifestyle Activity</label>
-        <select name="activity">
-            <option value="" disabled {% if not form_data.activity %}selected{% endif %}>Select an option</option>
-            <option value="Active" {% if form_data.activity == 'Active' %}selected{% endif %}>Active</option>
-            <option value="Moderate" {% if form_data.activity == 'Moderate' %}selected{% endif %}>Moderate</option>
-            <option value="Sedentary" {% if form_data.activity == 'Sedentary' %}selected{% endif %}>Sedentary</option>
-        </select>
+                    <label>Previous Pregnancy</label>
+                    <select name="pregnancy">
+                        <option value="" disabled {% if not form_data.pregnancy %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.pregnancy == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.pregnancy == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-        <label>Diabetes / Thyroid</label>
-        <select name="disease">
-            <option value="" disabled {% if not form_data.disease %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.disease == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.disease == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>Years Trying to Conceive</label>
+                    <input type="number" name="years" value="{{ form_data.years|default:'' }}">
 
-        <label>Have you undergone fertility tests?</label>
-        <select name="fertility_test">
-            <option value="" disabled {% if not form_data.fertility_test %}selected{% endif %}>Select an option</option>
-            <option value="Yes" {% if form_data.fertility_test == 'Yes' %}selected{% endif %}>Yes</option>
-            <option value="No" {% if form_data.fertility_test == 'No' %}selected{% endif %}>No</option>
-        </select>
+                    <label>Lifestyle Activity</label>
+                    <select name="activity">
+                        <option value="" disabled {% if not form_data.activity %}selected{% endif %}>Select an option</option>
+                        <option value="Active" {% if form_data.activity == 'Active' %}selected{% endif %}>Active</option>
+                        <option value="Moderate" {% if form_data.activity == 'Moderate' %}selected{% endif %}>Moderate</option>
+                        <option value="Sedentary" {% if form_data.activity == 'Sedentary' %}selected{% endif %}>Sedentary</option>
+                    </select>
 
-        <label>Known Fertility Issues?</label>
-        <select name="issues">
-            <option value="" disabled {% if not form_data.issues %}selected{% endif %}>Select an option</option>
-            <option value="PCOS" {% if form_data.issues == 'PCOS' %}selected{% endif %}>PCOS</option>
-            <option value="Endometriosis" {% if form_data.issues == 'Endometriosis' %}selected{% endif %}>Endometriosis</option>
-            <option value="Male Infertility" {% if form_data.issues == 'Male Infertility' %}selected{% endif %}>Male Infertility</option>
-            <option value="None" {% if form_data.issues == 'None' %}selected{% endif %}>None</option>
-        </select>
+                    <label>Diabetes / Thyroid</label>
+                    <select name="disease">
+                        <option value="" disabled {% if not form_data.disease %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.disease == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.disease == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-        <button type="submit">
-            Predict IVF Success
-        </button>
+                    <label>Have you undergone fertility tests?</label>
+                    <select name="fertility_test">
+                        <option value="" disabled {% if not form_data.fertility_test %}selected{% endif %}>Select an option</option>
+                        <option value="Yes" {% if form_data.fertility_test == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form_data.fertility_test == 'No' %}selected{% endif %}>No</option>
+                    </select>
 
-    </form>
+                    <label>Known Fertility Issues?</label>
+                    <select name="issues">
+                        <option value="" disabled {% if not form_data.issues %}selected{% endif %}>Select an option</option>
+                        <option value="PCOS" {% if form_data.issues == 'PCOS' %}selected{% endif %}>PCOS</option>
+                        <option value="Endometriosis" {% if form_data.issues == 'Endometriosis' %}selected{% endif %}>Endometriosis</option>
+                        <option value="Male Infertility" {% if form_data.issues == 'Male Infertility' %}selected{% endif %}>Male Infertility</option>
+                        <option value="None" {% if form_data.issues == 'None' %}selected{% endif %}>None</option>
+                    </select>
 
-    {% if prediction %}
-        <div style="margin-top:20px; padding:15px; border-radius:12px; background:#0f172a; color:#a7f3d0;">
-            <strong>Prediction:</strong> {{ prediction }}
-        </div>
-    {% endif %}
+                    <button type="submit">
+                        Predict IVF Success
+                    </button>
 
-</div>
+                </form>
 
-</body>
-</html>
+                {% if prediction %}
+                    <div style="margin-top:20px; padding:15px; border-radius:12px; background:#0f172a; color:#a7f3d0;">
+                        <strong>Prediction:</strong> {{ prediction }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            </body>
+            </html>

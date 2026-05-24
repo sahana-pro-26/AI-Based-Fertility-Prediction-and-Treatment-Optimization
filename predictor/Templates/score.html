@@ -1,1 +1,395 @@
-<h1>Fertility Score Page</h1>
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Fertility Score — FertiCare AI</title>
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+	<style>
+		body, html{margin:0;min-height:100vh;background:url("{% static 'Fertilitybg.png' %}") no-repeat center center/cover;overflow-y:auto}
+		.score-container{max-width:1100px;padding:90px 40px 40px;margin:60px auto;color:#fff;position:relative;overflow:visible;
+			background:rgba(255,255,255,0.16);
+			backdrop-filter:blur(20px);
+			border:1px solid rgba(255,255,255,0.35);
+			box-shadow:0 24px 80px rgba(16, 24, 40, 0.18);
+		}
+		.score-heading-row{
+			display:flex;
+			flex-direction:column;
+			align-items:center;
+			justify-content:center;
+			margin:0 auto 10px;
+			position:relative;
+			top:0;
+			z-index:10;
+		}
+		.score-container h1{
+			margin:0;
+			font-size:90px;
+			letter-spacing:0.02em;
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			text-shadow:0 8px 18px rgba(0,0,0,0.18);
+			padding-bottom:10px;
+			border-bottom:2px solid rgba(255,255,255,0.42);
+		}
+		.score-heading-row p{
+			margin:6px 0 0;
+			font-size:28px;
+			line-height:1.2;
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			text-shadow:0 1px 8px rgba(0,0,0,0.16);
+		}
+		.pcos-form input,
+		.pcos-form select{
+			width:100%;
+			padding:18px;
+			margin-bottom:20px;
+			border:none;
+			border-radius:20px;
+			background:rgba(255,255,255,0.12);
+			color:#ff4da6;
+			font-size:18px;
+			outline:none;
+			box-sizing:border-box;
+			border:1px solid rgba(255,255,255,0.28);
+			box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 35px rgba(10,17,38,0.18);
+			min-height:56px;
+			transition:border-color .25s,box-shadow .25s,transform .25s,background .25s;
+		}
+		.pcos-form input:hover,
+		.pcos-form select:hover{
+			background:rgba(255,255,255,0.18);
+		}
+		.pcos-form input:focus,
+		.pcos-form select:focus{
+			border-color:rgba(255,77,166,0.55);
+			box-shadow:0 0 0 3px rgba(255,77,166,0.18);
+			transform:translateY(-1px);
+		}
+		.score-container p{
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			font-size:18px;
+			max-width:760px;
+			margin:28px auto 0 0;
+			line-height:1.7;
+			text-align:center;
+			text-shadow:0 1px 8px rgba(0,0,0,0.16);
+		}
+		.pcos-form select option,
+		.pcos-form select option[disabled]{
+			color:#ff4da6;
+		}
+		.pcos-form select{
+			color:#ff4da6;
+		}
+		.pcos-form input::placeholder,
+		.pcos-form select option[disabled]{
+			color:#ff7fb2;
+			opacity:0.85;
+		}
+		.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+		.conditional-field{display:none;grid-column:1/-1;}
+		@media(max-width:800px){.form-grid{grid-template-columns:1fr}}
+		.result-card{margin-top:24px;background:rgba(255,255,255,0.06);padding:22px;border-radius:14px;display:flex;gap:24px;align-items:center}
+		.score-circle{width:170px;height:170px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:#ffffff;background:linear-gradient(180deg,#fff,#f0f0f3);box-shadow:0 12px 40px rgba(11,22,39,0.6)}
+		.result-meta{flex:1}
+		.indicator-row{display:flex;align-items:center;gap:10px;margin:12px 0 0;}
+		.indicator-dot{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,0.06);}
+		#result-category{font-size:26px;color:#f3f1ff;font-weight:800;margin-bottom:6px}
+		#result-range{display:none}
+		#result-msg{font-size:24px;font-weight:900;line-height:1.2;margin:6px 0 6px;padding:10px 14px;border-radius:10px;display:inline-block;transform:none}
+
+		/* Heading / result gradient style (re-used) */
+		.heading-gradient-text{
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			text-shadow:0 6px 18px rgba(184,92,246,0.08);
+		}
+
+		.gradient-circle{
+			background:linear-gradient(135deg,#ff4da6,#b85cf6) !important;
+			color:#ffffff !important;
+			box-shadow:0 18px 45px rgba(184,92,246,0.18) !important;
+			border:1px solid rgba(255,255,255,0.06);
+		}
+
+		.gradient-indicator{background:linear-gradient(135deg,#ff4da6,#b85cf6) !important; box-shadow:0 0 0 8px rgba(184,92,246,0.10) !important}
+		#result-details #result-points{font-size:18px}
+		.label{font-size:14px;color:#d7d7e8;margin-bottom:6px}
+		.page-accent{position:absolute;border-radius:50%;pointer-events:none;opacity:0.7;}
+		.page-accent-1{width:140px;height:140px;top:16%;left:4%;background:rgba(255, 192, 221, 0.22);box-shadow:0 30px 60px rgba(255, 192, 221, 0.2);}
+		.page-accent-2{width:100px;height:100px;bottom:12%;right:10%;background:rgba(183, 223, 255, 0.22);box-shadow:0 20px 45px rgba(183, 223, 255, 0.2);}
+		.page-accent-3{width:70px;height:70px;top:22%;right:16%;background:rgba(220, 255, 235, 0.26);box-shadow:0 16px 35px rgba(220, 255, 235, 0.2);}
+		@media(max-width:800px){.page-accent-1{top:10%;left:3%;width:100px;height:100px;}
+			.page-accent-2{bottom:10%;right:6%;width:80px;height:80px;}
+			.page-accent-3{top:34%;left:auto;right:14%;width:55px;height:55px;}}
+	</style>
+</head>
+<body>
+
+<div class="pcos-container score-container">
+	<div class="page-accent page-accent-1"></div>
+	<div class="page-accent page-accent-2"></div>
+	<div class="page-accent page-accent-3"></div>
+
+	<div class="score-heading-row">
+		<h1>Fertility Score</h1>
+		<p>Complete the quick questionnaire below to get an estimated fertility score.</p>
+	</div>
+
+	<form id="score-form" class="pcos-form" method="post">
+		{% csrf_token %}
+		<div class="form-grid">
+			<div>
+				<label class="input-label">Enter age</label>
+				<input name="age" type="number" placeholder="Enter age" min="18">
+			</div>
+			<div>
+				<label class="input-label">Enter weight</label>
+				<input name="weight" type="number" placeholder="Enter weight (kg)" step="0.1">
+			</div>
+			<div>
+				<label class="input-label">Enter height</label>
+				<input name="height" type="number" placeholder="Enter height (cm)" step="0.1">
+			</div>
+
+			<div>
+				<label class="input-label">Menstrual cycle</label>
+				<select name="menstrual_cycle">
+					<option value="" disabled selected>Select an option</option>
+					<option value="Regular">Regular</option>
+					<option value="Irregular">Irregular</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Smoking Status</label>
+				<select name="smoking">
+					<option value="" disabled selected>Select an option</option>
+					<option value="non-smoker">Non-Smoker</option>
+					<option value="occasional">Occasional smoker</option>
+					<option value="regular">Regular smoker</option>
+					<option value="former">Former smoker</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Alcohol intake frequency</label>
+				<select name="alcohol">
+					<option value="" disabled selected>Select an option</option>
+					<option value="never">Never</option>
+					<option value="occasionally">Occasionally</option>
+					<option value="moderately">Moderately</option>
+					<option value="frequently">Frequently</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Exercise level</label>
+				<select name="exercise">
+					<option value="" disabled selected>Select an option</option>
+					<option value="Active">Active</option>
+					<option value="Moderate">Moderate</option>
+					<option value="Low">Low</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">PCOS/PMOS Diagnosis Status</label>
+				<select name="pcos">
+					<option value="" disabled selected>Select an option</option>
+					<option value="No">No</option>
+					<option value="Yes">Yes</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Previous pregnancy</label>
+				<select name="previous_pregnancy">
+					<option value="" disabled selected>Select an option</option>
+					<option value="No">No previous pregnancy</option>
+					<option value="Yes">Previous pregnancy</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Partner issues</label>
+				<select name="partner_issues">
+					<option value="" disabled selected>Select an option</option>
+					<option value="No">No known partner issues</option>
+					<option value="Yes">Partner fertility issues</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Fertility tests</label>
+				<select name="fertility_test">
+					<option value="" disabled selected>Select an option</option>
+					<option value="No">No fertility tests</option>
+					<option value="Yes">Completed fertility tests</option>
+				</select>
+			</div>
+
+			<div>
+				<label class="input-label">Hormonal & Medical Indicators</label>
+				<select name="medical_indicator" id="medical-indicator-select">
+					<option value="" disabled selected>Select an option</option>
+					<option value="AMH">AMH (Anti-Müllerian Hormone) Level</option>
+					<option value="Thyroid">Thyroid Health Status</option>
+					<option value="Diabetes">Diabetes History</option>
+				</select>
+			</div>
+			<div id="amh-field" class="conditional-field">
+				<label class="input-label">Enter AMH level</label>
+				<input name="amh_level" type="number" placeholder="Enter AMH level (ng/mL)" step="0.01" min="0">
+			</div>
+
+			<div id="thyroid-field" class="conditional-field">
+				<label class="input-label">Thyroid health status</label>
+				<select name="thyroid_status" id="thyroid-status-select">
+					<option value="" disabled selected>Select an option</option>
+					<option value="Normal">Normal</option>
+					<option value="Hypothyroidism">Hypothyroidism</option>
+					<option value="Hyperthyroidism">Hyperthyroidism</option>
+				</select>
+			</div>
+
+			<div id="diabetes-field" class="conditional-field">
+				<label class="input-label">Diabetes history</label>
+				<select name="diabetes_status" id="diabetes-status-select">
+					<option value="" disabled selected>Select an option</option>
+					<option value="NoHistory">No history</option>
+					<option value="Type1">Type 1 diabetes</option>
+					<option value="Type2">Type 2 diabetes</option>
+				</select>
+			</div>		</div>
+
+		<div style="text-align:center;margin-top:22px">
+			<button id="predict-btn" type="submit">Predict Fertility Score</button>
+		</div>
+	</form>
+
+	<div id="result" class="result-card" style="display:none;">
+		<div class="score-circle" id="score-val">0%</div>
+		<div class="result-meta">
+			<div class="label" id="result-category">Category</div>
+		</div>
+	</div>
+
+	<div id="result-details" style="display:none; text-align:center; margin-top:18px; position:relative;">
+		<div class="indicator-row" style="justify-content:center;">
+			<div class="indicator-dot" id="result-indicator"></div>
+		</div>
+		<div id="result-msg" style="margin-top:6px;font-size:24px;color:#fff;font-weight:900;"></div>
+		<div id="result-points" style="margin-top:16px;font-size:18px;color:#fff;font-weight:700;"></div>
+	</div>
+
+</div>
+
+<script>
+// Helper to read csrftoken from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+	const cookies = document.cookie.split(';');
+	for (let i = 0; i < cookies.length; i++) {
+	  const cookie = cookies[i].trim();
+	  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		break;
+	  }
+	}
+  }
+  return cookieValue;
+}
+
+// Convert hex color to rgba with alpha
+function hexToRgba(hex, alpha){
+		if(!hex) return '';
+		let h = hex.replace('#','');
+		if(h.length === 3) h = h.split('').map(c=>c+c).join('');
+		const bigint = parseInt(h,16);
+		const r = (bigint >> 16) & 255;
+		const g = (bigint >> 8) & 255;
+		const b = bigint & 255;
+		return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function updateMedicalIndicatorFields(){
+	const selected = document.getElementById('medical-indicator-select').value;
+	document.getElementById('amh-field').style.display = selected === 'AMH' ? 'block' : 'none';
+	document.getElementById('thyroid-field').style.display = selected === 'Thyroid' ? 'block' : 'none';
+	document.getElementById('diabetes-field').style.display = selected === 'Diabetes' ? 'block' : 'none';
+}
+
+document.getElementById('medical-indicator-select').addEventListener('change', updateMedicalIndicatorFields);
+updateMedicalIndicatorFields();
+
+document.getElementById('score-form').addEventListener('submit', async function(e){
+	e.preventDefault();
+	const form = e.target;
+	const data = new FormData(form);
+
+	const headers = { 'X-CSRFToken': getCookie('csrftoken') };
+
+	document.getElementById('predict-btn').disabled = true;
+	document.getElementById('predict-btn').textContent = 'Predicting...';
+
+	try{
+		const resp = await fetch(window.location.pathname, { method: 'POST', body: data, headers: headers });
+		const json = await resp.json();
+		if(json.status === 'success'){
+			document.getElementById('score-val').textContent = json.score + '%';
+			// put only category inside the card
+			document.getElementById('result-category').textContent = json.category;
+			// populate details below the card
+			document.getElementById('result-points').textContent = json.points + '/' + json.total + ' points';
+			document.getElementById('result-msg').textContent = json.message;
+			document.getElementById('result').style.display = 'flex';
+			document.getElementById('result-details').style.display = 'block';
+			const circle = document.getElementById('score-val');
+			const indicator = document.getElementById('result-indicator');
+			const categoryEl = document.getElementById('result-category');
+			const msgEl = document.getElementById('result-msg');
+			// Use the same elegant heading gradient for all outputs
+			const headingGradClass = 'heading-gradient-text';
+			const circleGradClass = 'gradient-circle';
+			const indicatorGradClass = 'gradient-indicator';
+
+			// remove any inline color styles applied previously and apply gradient class
+			[categoryEl, msgEl].forEach(el=>{
+				el.style.color = '';
+				el.style.backgroundColor = '';
+				el.style.boxShadow = '';
+				el.style.border = '';
+				el.classList.add(headingGradClass);
+			});
+
+			// Apply gradient to the score circle and small indicator
+			circle.classList.add(circleGradClass);
+			indicator.classList.add(indicatorGradClass);
+		} else {
+			alert(json.message || 'Prediction error');
+		}
+	} catch(err){
+		alert('Error submitting form: ' + err);
+	} finally{
+		document.getElementById('predict-btn').disabled = false;
+		document.getElementById('predict-btn').textContent = 'Predict Fertility Score';
+	}
+});
+</script>
+
+</body>
+</html>
