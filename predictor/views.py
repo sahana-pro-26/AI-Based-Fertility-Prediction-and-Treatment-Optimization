@@ -241,4 +241,150 @@ def score(request):
     return render(request, 'score.html')
 
 def recommend(request):
+    if request.method == 'POST':
+        try:
+            # Collect form data
+            age = request.POST.get('age')
+            weight = request.POST.get('weight')
+            pcos_status = request.POST.get('pcos_status', 'No')
+            fertility_score = request.POST.get('fertility_score')
+
+            # Convert to proper types
+            try:
+                age_val = int(age) if age not in (None, '') else None
+            except ValueError:
+                age_val = None
+
+            try:
+                weight_val = float(weight) if weight not in (None, '') else None
+            except ValueError:
+                weight_val = None
+
+            try:
+                score_val = int(fertility_score) if fertility_score not in (None, '') else None
+            except ValueError:
+                score_val = None
+
+            # Generate recommendations based on inputs
+            recommendations = []
+
+            # Age-based recommendations
+            if age_val is not None:
+                if age_val < 25:
+                    recommendations.append("Focus on maintaining overall health. Consider tracking your menstrual cycle and starting prenatal vitamins.")
+                elif age_val < 35:
+                    recommendations.append("This is an optimal fertility window. Maintain healthy lifestyle habits and regular check-ups.")
+                elif age_val < 40:
+                    recommendations.append("Consider fertility testing if planning pregnancy. Discuss with a specialist about your timeline.")
+                else:
+                    recommendations.append("Age-related fertility considerations increase. Consult with a fertility specialist for personalized guidance.")
+
+            # Weight-based recommendations
+            if weight_val is not None and age_val is not None:
+                # Estimate BMI (assume average height of 165cm for recommendation purposes)
+                height_m = 1.65
+                bmi = weight_val / (height_m * height_m)
+                if bmi < 18.5:
+                    recommendations.append("Maintain a balanced diet to achieve a healthy weight. Underweight status may affect fertility.")
+                elif bmi > 30:
+                    recommendations.append("Consider a gradual weight management plan. Maintaining a healthy weight can improve fertility outcomes.")
+                else:
+                    recommendations.append("Your weight is in a healthy range. Continue balanced nutrition and regular exercise.")
+
+            # PCOS-based recommendations
+            if pcos_status == 'Yes':
+                recommendations.append("PCOS management is important: maintain balanced diet, regular exercise, manage stress, and follow up with your healthcare provider for hormonal assessment.")
+            else:
+                recommendations.append("No PCOS detected. Continue healthy lifestyle practices and regular medical check-ups.")
+
+            # Fertility score-based recommendations
+            score_header = ''
+            score_details = []
+            if score_val is not None:
+                if score_val <= 40:
+                    score_header = 'Score 0–40'
+                    score_details = [
+                        'Consult a fertility specialist',
+                        'Comprehensive reproductive health evaluation',
+                        'Lifestyle modifications'
+                    ]
+                elif score_val <= 70:
+                    score_header = 'Score 41–70'
+                    score_details = [
+                        'Regular health monitoring',
+                        'Improve sleep and nutrition',
+                        'Stress management techniques'
+                    ]
+                else:
+                    score_header = 'Score 71–100'
+                    score_details = [
+                        'Maintain current healthy habits',
+                        'Regular reproductive health checkups',
+                        'Continue balanced diet and exercise'
+                    ]
+
+            # Build HTML output
+            custom_message = ''
+            if pcos_status == 'Yes':
+                custom_message = '<p><strong>PCOS Management:</strong> Maintain balanced diet, regular exercise, and stress control. Follow up with your healthcare provider for hormonal assessment.</p>'
+            else:
+                custom_message = '<p><strong>General Note:</strong> No PCOS detected. Continue healthy lifestyle practices and regular check-ups.</p>'
+
+            score_section = ''
+            if score_header:
+                score_items = ''.join(f'<li>{item}</li>' for item in score_details)
+                score_section = f'<div><strong>{score_header}</strong><ul>{score_items}</ul></div>'
+
+            tips_section = ('<div><strong>Key Tips:</strong>'
+                            '<ul>'
+                            '<li>Stay hydrated and aim for 7-8 hours of sleep every night.</li>'
+                            '<li>Manage stress with mindfulness, yoga, or breathing exercises.</li>'
+                            '<li>Avoid smoking, excess alcohol, and processed foods.</li>'
+                            '</ul></div>')
+
+            diet_section = ('<div><strong>Balanced Diet Recommendations:</strong>'
+                            '<ul>'
+                            '<li>Include lean protein daily: fish, poultry, eggs, legumes.</li>'
+                            '<li>Eat plenty of fiber-rich vegetables, fruits, and whole grains.</li>'
+                            '<li>Choose healthy fats such as avocado, nuts, seeds and olive oil.</li>'
+                            '<li>Limit refined sugars and highly processed snacks.</li>'
+                            '</ul></div>')
+
+            exercise_section = ('<div><strong>Exercise Recommendations:</strong>'
+                                '<ul>'
+                                '<li>Begin with 30 minutes of moderate activity most days.</li>'
+                                '<li>Use low-impact aerobic exercise like walking, swimming, or cycling.</li>'
+                                '<li>Add gentle strength training 2-3 times per week.</li>'
+                                '<li>Include yoga and stretching for hormonal balance and stress relief.</li>'
+                                '</ul></div>')
+
+            yoga_links = (
+                '<div><strong>Yoga Tutorials:</strong>'
+                '<ul>'
+                '<li><a href="https://www.youtube.com/watch?v=zRWUrWPWD2Y" target="_blank" rel="noopener noreferrer">PCOS Yoga Routine - 15 Min Full Body</a></li>'
+                '<li><a href="https://www.youtube.com/watch?v=YukpAFgNJM8" target="_blank" rel="noopener noreferrer">PCOS Exercise & Fitness Plan - Doctor Explained</a></li>'
+                '<li><a href="https://www.youtube.com/watch?v=dxV8UjwzmPA" target="_blank" rel="noopener noreferrer">PCOS Management & Yoga Tips</a></li>'
+                '</ul></div>'
+            )
+
+            # Add score-based summary to top
+            if score_section:
+                recommendations.insert(0, score_section)
+
+            # Add the custom note and sections
+            recommendations.append(custom_message)
+            recommendations.append(tips_section)
+            recommendations.append(diet_section)
+            recommendations.append(exercise_section)
+            recommendations.append(yoga_links)
+
+            recommendation_text = ''.join(recommendations)
+
+            return JsonResponse({
+                'status': 'success',
+                'recommendation_html': recommendation_text
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
     return render(request, 'recommend.html')

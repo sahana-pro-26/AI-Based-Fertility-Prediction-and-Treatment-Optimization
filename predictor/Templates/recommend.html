@@ -1,1 +1,347 @@
-<h1>Recommendations Page</h1>
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Fertility Recommendations — FertiCare AI</title>
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+	<style>
+		body, html{margin:0;min-height:100vh;background:url("{% static 'Fertilitybg.png' %}") no-repeat center center/cover;overflow-y:auto}
+		.score-container{max-width:1100px;padding:90px 40px 40px;margin:60px auto;color:#fff;position:relative;overflow:visible;
+			background:rgba(255,255,255,0.16);
+			backdrop-filter:blur(20px);
+			border:1px solid rgba(255,255,255,0.35);
+			box-shadow:0 24px 80px rgba(16, 24, 40, 0.18);
+		}
+		.score-heading-row{
+			display:flex;
+			flex-direction:column;
+			align-items:center;
+			justify-content:center;
+			margin:0 auto 10px;
+			position:relative;
+			top:0;
+			z-index:10;
+		}
+		.score-container h1{
+			margin:0;
+			font-size:90px;
+			letter-spacing:0.02em;
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			text-shadow:0 8px 18px rgba(0,0,0,0.18);
+			padding-bottom:10px;
+			border-bottom:2px solid rgba(255,255,255,0.42);
+		}
+		.score-heading-row p{
+			margin:6px 0 0;
+			font-size:28px;
+			line-height:1.2;
+			background:linear-gradient(135deg,#ff4da6,#b85cf6);
+			-webkit-background-clip:text;
+			-webkit-text-fill-color:transparent;
+			background-clip:text;
+			text-shadow:0 1px 8px rgba(0,0,0,0.16);
+		}
+		.pcos-form input,
+		.pcos-form select{
+			width:100%;
+			padding:18px;
+			margin-bottom:20px;
+			border:none;
+			border-radius:20px;
+			background:rgba(255,255,255,0.12);
+			color:#ff4da6;
+			font-size:18px;
+			outline:none;
+			box-sizing:border-box;
+			border:1px solid rgba(255,255,255,0.28);
+			box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 35px rgba(10,17,38,0.18);
+			min-height:56px;
+			transition:border-color .25s,box-shadow .25s,transform .25s,background .25s;
+		}
+		.pcos-form input:hover,
+		.pcos-form select:hover{
+			background:rgba(255,255,255,0.18);
+		}
+		.pcos-form input:focus,
+		.pcos-form select:focus{
+			border-color:rgba(255,77,166,0.55);
+			box-shadow:0 0 0 3px rgba(255,77,166,0.18);
+			transform:translateY(-1px);
+		}
+		.pcos-form select option,
+		.pcos-form select option[disabled]{
+			color:#ff4da6;
+		}
+		.pcos-form select{
+			color:#ff4da6;
+		}
+		.pcos-form input::placeholder,
+		.pcos-form select option[disabled]{
+			color:#ff7fb2;
+			opacity:0.85;
+		}
+		.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+		.conditional-field{display:none;grid-column:1/-1;}
+		@media(max-width:800px){.form-grid{grid-template-columns:1fr}}
+
+		/* Make the input field headings slightly larger on this page only */
+		.pcos-form .input-label{
+			font-size:18px;
+			font-weight:700;
+			color:#ffffff;
+			margin-bottom:10px;
+			display:block;
+		}
+
+		/* Result box styles - match input styling */
+		.result-box{background:rgba(255,255,255,0.12);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.28);box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 35px rgba(10,17,38,0.18);max-width:760px;margin:0 auto;color:#ff4da6;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+		.result-box.show{opacity:1;transform:none}
+
+		/* Result box styles - match input styling */
+		.result-box{background:rgba(255,255,255,0.12);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.28);box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 35px rgba(10,17,38,0.18);max-width:760px;margin:0 auto;color:#ff4da6;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+		.result-box.show{opacity:1;transform:none}
+
+		.result-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+		.recommendation-text{font-size:18px;font-weight:800;color:#0b3d91;text-align:center;line-height:1.5}
+
+		/* Button styling - same as fertility score page */
+		#recommend-btn{width:100%;max-width:350px;padding:18px;border:none;border-radius:50px;background:linear-gradient(135deg,#ff4da6,#b85cf6);color:#fff;font-size:18px;font-weight:bold;cursor:pointer;transition:0.3s;box-shadow:0 0 20px rgba(255,77,166,0.4);display:block;margin:auto;outline:none}
+		#recommend-btn:hover{transform:scale(1.03)}
+		#recommend-btn:disabled{opacity:0.6;cursor:not-allowed}
+
+		/* PCOS Management Section */
+		.management-section{display:none;margin-top:25px;padding:20px;background:rgba(11,61,145,0.08);border:1px solid rgba(11,61,145,0.28);border-radius:14px;animation:slideIn 0.3s ease}
+		.management-section.show{display:block}
+		.management-title{font-size:18px;font-weight:bold;color:#0b3d91;margin-bottom:15px;text-align:center}
+		.management-checkbox{display:flex;align-items:center;gap:10px;margin-bottom:15px;cursor:pointer}
+		.management-checkbox input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:#0b3d91}
+		.management-checkbox label{cursor:pointer;color:#0b3d91;font-weight:bold;margin:0;display:block;font-size:16px}
+		.recommendations{display:none;margin-top:15px}
+		.recommendations.show{display:block}
+		.recommendation-category{margin-bottom:18px}
+		.rec-category-title{font-size:16px;font-weight:bold;color:#0b3d91;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+		.rec-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+		.rec-list li{color:#0b3d91;font-size:14px;padding-left:20px;position:relative}
+		.rec-list li:before{content:"✓";position:absolute;left:0;color:#0b3d91;font-weight:bold}
+		.youtube-resources{margin-top:15px}
+		.youtube-link{display:block;margin-bottom:10px;padding:10px;background:rgba(11,61,145,0.12);border:1px solid rgba(11,61,145,0.28);border-radius:8px;color:#0b3d91;text-decoration:none;font-size:13px;transition:0.3s;text-align:center}
+		.youtube-link:hover{background:rgba(11,61,145,0.2);transform:translateY(-2px)}
+		@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+		.page-accent{position:absolute;border-radius:50%;pointer-events:none;opacity:0.7;}
+		.page-accent-1{width:140px;height:140px;top:16%;left:4%;background:rgba(255, 192, 221, 0.22);box-shadow:0 30px 60px rgba(255, 192, 221, 0.2);}
+		.page-accent-2{width:100px;height:100px;bottom:12%;right:10%;background:rgba(183, 223, 255, 0.22);box-shadow:0 20px 45px rgba(183, 223, 255, 0.2);}
+		.page-accent-3{width:70px;height:70px;top:22%;right:16%;background:rgba(220, 255, 235, 0.26);box-shadow:0 16px 35px rgba(220, 255, 235, 0.2);}
+		@media(max-width:800px){.page-accent-1{top:10%;left:3%;width:100px;height:100px;}
+			.page-accent-2{bottom:10%;right:6%;width:80px;height:80px;}
+			.page-accent-3{top:34%;left:auto;right:14%;width:55px;height:55px;}}
+	</style>
+</head>
+<body>
+
+<div class="pcos-container score-container">
+	<div class="page-accent page-accent-1"></div>
+	<div class="page-accent page-accent-2"></div>
+	<div class="page-accent page-accent-3"></div>
+
+	<div class="score-heading-row">
+		<h1>Fertility Recommendations</h1>
+		<p>Get personalized recommendations based on your fertility assessment.</p>
+	</div>
+
+	<form id="recommend-form" class="pcos-form" method="post">
+		{% csrf_token %}
+		<div class="form-grid">
+			<div>
+				<label class="input-label">Enter age</label>
+				<input name="age" type="number" placeholder="Enter age" min="18">
+			</div>
+
+			<div>
+				<label class="input-label">Enter weight</label>
+				<input name="weight" type="number" placeholder="Enter weight (kg)" step="0.1">
+			</div>
+
+			<div>
+				<label class="input-label">PCOS/PMOS Diagnosis Status</label>
+			<select id="pcosStatusSelect" name="pcos_status">
+				<option value="" disabled selected>Select an option</option>
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>
+
+			<div>
+				<label class="input-label">Fertility Score</label>
+				<input name="fertility_score" type="number" placeholder="Enter fertility score (0-100)" min="0" max="100">
+			</div>
+		</div>
+
+		<div style="text-align:center;margin-top:22px">
+			<button id="recommend-btn" type="submit">Get Recommendations</button>
+		</div>
+	</form>
+
+	<!-- Result box: shows recommendation -->
+	<div id="result-box" class="result-box" style="display:none; margin-top:28px;">
+		<div class="result-row">
+			<div id="recommendation-text" class="recommendation-text"></div>
+		</div>
+	</div>
+
+	<!-- PCOS Management Support Section -->
+	<div class="management-section" id="managementSection">
+		<div class="management-title">PCOS Management Support</div>
+		
+		<div class="management-checkbox">
+			<input type="checkbox" id="managementCheckbox">
+			<label for="managementCheckbox">Would you like PCOS management recommendations?</label>
+		</div>
+
+		<!-- Recommendations Content -->
+		<div class="recommendations" id="recommendationsContent">
+			
+			<!-- Diet Recommendations -->
+			<div class="recommendation-category">
+				<div class="rec-category-title">🥗 Diet Recommendations</div>
+				<ul class="rec-list">
+					<li>Increase protein intake (eggs, fish, chicken, legumes)</li>
+					<li>Reduce refined sugar and processed foods</li>
+					<li>Eat more vegetables and fruits (high fiber)</li>
+					<li>Include healthy fats (nuts, olive oil, avocado)</li>
+					<li>Stay hydrated with 8-10 glasses of water daily</li>
+				</ul>
+			</div>
+
+			<!-- Exercise Recommendations -->
+			<div class="recommendation-category">
+				<div class="rec-category-title">💪 Exercise Recommendations</div>
+				<ul class="rec-list">
+					<li>30 minutes brisk walking daily</li>
+					<li>Yoga for hormonal balance (3 times per week)</li>
+					<li>Strength training 2–3 times per week</li>
+					<li>Swimming or cycling for low-impact cardio</li>
+					<li>Avoid high-intensity workouts; focus on consistency</li>
+				</ul>
+			</div>
+
+			<!-- YouTube Resources -->
+			<div class="recommendation-category youtube-resources">
+				<div class="rec-category-title">📹 YouTube Resources</div>
+			<a href="https://www.youtube.com/watch?v=tJhgLNghfPU" target="_blank" rel="noopener noreferrer" class="youtube-link">
+				PCOS Diet & Nutrition Guide - Emma's Diary (Well-Reviewed)
+			</a>
+			<a href="https://www.youtube.com/watch?v=zRWUrWPWD2Y" target="_blank" rel="noopener noreferrer" class="youtube-link">
+				PCOS Yoga Routine - 15 Min Full Body (Trending)
+			</a>
+			<a href="https://www.youtube.com/watch?v=YukpAFgNJM8" target="_blank" rel="noopener noreferrer" class="youtube-link">
+				PCOS Exercise & Fitness Plan - Doctor Explained (Popular)
+			</a>
+			<a href="https://www.youtube.com/watch?v=dxV8UjwzmPA" target="_blank" rel="noopener noreferrer" class="youtube-link">
+				PCOS Management - Complete Guide (Highly Rated)
+			</a>
+			<a href="https://www.youtube.com/watch?v=65wSzjJp3iY" target="_blank" rel="noopener noreferrer" class="youtube-link">
+				Healing PCOS Naturally - Holistic Approach (Recommended)
+			</a>
+
+		</div>
+	</div>
+
+</div>
+
+<script>
+// Helper to read csrftoken from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+	const cookies = document.cookie.split(';');
+	for (let i = 0; i < cookies.length; i++) {
+	  const cookie = cookies[i].trim();
+	  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		break;
+	  }
+	}
+  }
+  return cookieValue;
+}
+
+const pcosStatusSelect = document.getElementById('pcosStatusSelect');
+const managementSection = document.getElementById('managementSection');
+const managementCheckbox = document.getElementById('managementCheckbox');
+const recommendationsContent = document.getElementById('recommendationsContent');
+
+function updateManagementSection() {
+	if (pcosStatusSelect.value === 'Yes') {
+		managementSection.classList.add('show');
+		managementCheckbox.checked = false;
+		recommendationsContent.classList.remove('show');
+	} else {
+		managementSection.classList.remove('show');
+		managementCheckbox.checked = false;
+		recommendationsContent.classList.remove('show');
+	}
+}
+
+pcosStatusSelect.addEventListener('change', updateManagementSection);
+
+// Initialize visibility on page load
+updateManagementSection();
+
+document.getElementById('recommend-form').addEventListener('submit', async function(e){
+	e.preventDefault();
+	const form = e.target;
+	const data = new FormData(form);
+	const pcos_status = data.get('pcos_status');
+
+	const headers = { 'X-CSRFToken': getCookie('csrftoken') };
+
+	document.getElementById('recommend-btn').disabled = true;
+	document.getElementById('recommend-btn').textContent = 'Generating...';
+
+	try{
+		const resp = await fetch(window.location.pathname, { method: 'POST', body: data, headers: headers });
+		const json = await resp.json();
+		if(json.status === 'success'){
+			// Show the recommendation result
+			const resultBox = document.getElementById('result-box');
+			const recText = document.getElementById('recommendation-text');
+			recText.innerHTML = json.recommendation_html || 'Recommendation generated';
+			resultBox.style.display = 'block';
+			setTimeout(() => resultBox.classList.add('show'), 10);
+
+			if(pcos_status === 'Yes'){
+				managementSection.classList.add('show');
+				managementCheckbox.checked = false;
+				recommendationsContent.classList.remove('show');
+			} else {
+				managementSection.classList.remove('show');
+				managementCheckbox.checked = false;
+				recommendationsContent.classList.remove('show');
+			}
+		} else {
+			alert(json.message || 'Error generating recommendations');
+		}
+	} catch(err){
+		alert('Error submitting form: ' + err);
+	} finally{
+		document.getElementById('recommend-btn').disabled = false;
+		document.getElementById('recommend-btn').textContent = 'Get Recommendations';
+	}
+});
+
+// Handle management checkbox
+managementCheckbox.addEventListener('change', function(){
+	if(this.checked){
+		recommendationsContent.classList.add('show');
+	} else {
+		recommendationsContent.classList.remove('show');
+	}
+});
+</script>
+
+</body>
+</html>
