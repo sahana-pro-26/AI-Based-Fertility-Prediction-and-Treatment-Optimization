@@ -15,6 +15,7 @@ def predict_pcos(request):
     try:
         age = int(request.POST.get('age', 0))
         weight = float(request.POST.get('weight', 0))
+        weight_change = request.POST.get('weight_change', 'No Change')
         menstrual_cycle = request.POST.get('irregular_period', 'Regular')
         acne_problem = request.POST.get('acne_problem', 'No')
         hair_loss = request.POST.get('hair_loss', 'No')
@@ -28,7 +29,7 @@ def predict_pcos(request):
         hair_loss_value = 1 if hair_loss == 'Yes' else 0
         facial_hair_value = 1 if facial_hair == 'Yes' else 0
         mood_swings_value = 1 if mood_swings == 'Yes' else 0
-        weight_gain = 0  # Default value (can be enhanced with additional form field)
+        weight_gain = 1 if weight_change == 'Weight Gain' else 0
         
         # Get prediction
         result = get_pcos_prediction(
@@ -47,7 +48,8 @@ def predict_pcos(request):
             'has_pcos': result['has_pcos'],
             'confidence': round(result['confidence'], 2),
             'pcos_probability': round(result['pcos_probability'], 2),
-            'message': 'PCOS Detected' if result['has_pcos'] else 'PCOS Not Detected'
+            'prediction_status': result['status'],
+            'message': result['status']
         })
     
     except Exception as e:
