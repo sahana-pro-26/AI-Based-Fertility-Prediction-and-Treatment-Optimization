@@ -138,6 +138,12 @@ h1{
     color:#ff4da6;
 }
 
+.result.at-risk{
+    background:rgba(255, 193, 7, 0.2);
+    border:2px solid #ffc107;
+    color:#ffc107;
+}
+
 .result.negative{
     background:rgba(122, 90, 166, 0.2);
     border:2px solid #7A5AA6;
@@ -179,7 +185,17 @@ h1{
         </label>
 
         <label>
-            <span class="field-label">🔄 Menstrual Cycle</span>
+            <span class="field-label">� Weight Change</span>
+            <select name="weight_change" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Weight Gain">Weight Gain</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="No Change">No Change</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">�🔄 Menstrual Cycle</span>
             <select name="irregular_period" required>
                 <option value="Regular">Regular</option>
                 <option value="Irregular">Irregular</option>
@@ -198,6 +214,7 @@ h1{
         <label>
             <span class="field-label">🧑‍🦲 Hair Loss</span>
             <select name="hair_loss" id="hairLoss" required>
+                <option value="" disabled selected>Select an option</option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
             </select>
@@ -206,8 +223,10 @@ h1{
         <label id="hairLossDetailLabel" style="display:none;">
             <span class="field-label">Hair Loss Severity</span>
             <select name="hair_loss_detail" id="hairLossDetail">
-                <option value="Moderate">Moderate</option>
-                <option value="Excess">Excess</option>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Low">Low Hair Loss</option>
+                <option value="Moderate">Moderate Hair Loss</option>
+                <option value="Excess">Excess Hair Loss</option>
             </select>
         </label>
 
@@ -267,7 +286,7 @@ document.getElementById("pcosForm").addEventListener("submit", function(e){
     // Show loading state
     resultDiv.innerHTML = "Analyzing...";
     resultDiv.classList.add("show");
-    resultDiv.classList.remove("positive", "negative");
+    resultDiv.classList.remove("positive", "negative", "at-risk");
     
     fetch("{% url 'predict_pcos' %}", {
         method: 'POST',
@@ -276,24 +295,36 @@ document.getElementById("pcosForm").addEventListener("submit", function(e){
     .then(response => response.json())
     .then(data => {
         if(data.status === 'success'){
-            const isPCOS = data.has_pcos;
             const message = data.message;
             const confidence = data.confidence;
+            const predictionStatus = data.prediction_status;
             
             resultDiv.innerHTML = `
                 <div class="result-message">${message}</div>
                 <div class="result-confidence">Confidence: ${confidence}%</div>
             `;
             
-            resultDiv.classList.add(isPCOS ? 'positive' : 'negative');
+            // Remove all status classes
+            resultDiv.classList.remove('positive', 'negative', 'at-risk');
+            
+            // Add appropriate status class
+            if(predictionStatus === 'PCOS Detected'){
+                resultDiv.classList.add('positive');
+            } else if(predictionStatus === 'At Risk'){
+                resultDiv.classList.add('at-risk');
+            } else {
+                resultDiv.classList.add('negative');
+            }
         } else {
             resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error: ${data.message}</div>`;
+            resultDiv.classList.remove('positive', 'negative', 'at-risk');
             resultDiv.classList.add('negative');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error processing request</div>`;
+        resultDiv.classList.remove('positive', 'negative', 'at-risk');
         resultDiv.classList.add('negative');
     });
 });

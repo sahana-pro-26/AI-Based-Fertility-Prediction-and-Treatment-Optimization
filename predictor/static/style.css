@@ -7,7 +7,7 @@ body{
     justify-content:center;
     align-items:center;
     text align: center;
-    background:#2B2C63;
+    background:transparent;
     font-family:Arial;
 }
 
@@ -154,7 +154,9 @@ p{
 
 .feature-panel{
     margin-top:20px;
-    background:rgba(0,0,0,0.75);
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.2);
     padding:25px;
     border-radius:20px;
     display:flex;
@@ -167,7 +169,7 @@ p{
 
 .feature-btn{
     text-decoration:none;
-    background:#2458a6;
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
     color:white;
     padding:15px 30px;
     border-radius:15px;

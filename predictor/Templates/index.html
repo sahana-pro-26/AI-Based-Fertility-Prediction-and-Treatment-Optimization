@@ -10,11 +10,41 @@
 
     <style>
         body {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("{% static 'frontpage-bg.png' %}");
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url("{% static 'frontpage-bg.png' %}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+        }
+        .feature-panel {
+            background:rgba(255,255,255,0.08) !important;
+            backdrop-filter:blur(10px) !important;
+            border:1px solid rgba(255,255,255,0.2) !important;
+        }
+        .feature-btn {
+            background:linear-gradient(135deg,#ff4da6,#b85cf6) !important;
+        }
+        .feature-btn:hover {
+            background:linear-gradient(135deg,#ff4da6,#b85cf6) !important;
+        }
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #ff4da6, #b85cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
+        .feature-panel {
+            flex-direction: column;
+            align-items: center;
+        }
+        .feature-panel a {
+            text-align: center;
         }
     </style>
 

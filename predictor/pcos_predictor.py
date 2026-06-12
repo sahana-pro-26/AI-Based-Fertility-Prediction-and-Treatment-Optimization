@@ -125,18 +125,31 @@ def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, 
         prediction = model.predict(features_scaled)[0]
         probability = model.predict_proba(features_scaled)[0]
         
+        # Get PCOS probability
+        pcos_prob = float(probability[1]) * 100 if len(probability) > 1 else 0
+        
+        # Determine status based on probability thresholds
+        if pcos_prob >= 70:
+            status = "PCOS Detected"
+        elif pcos_prob >= 40:
+            status = "At Risk"
+        else:
+            status = "PCOS Not Detected"
+        
         return {
             'prediction': int(prediction),
-            'has_pcos': prediction == 1,
+            'has_pcos': int(prediction == 1),
+            'status': status,
             'confidence': float(max(probability)) * 100,
-            'pcos_probability': float(probability[1]) * 100 if len(probability) > 1 else 0
+            'pcos_probability': pcos_prob
         }
         
     except Exception as e:
         print(f"Error making prediction: {e}")
         return {
             'prediction': 0,
-            'has_pcos': False,
+            'has_pcos': 0,
+            'status': 'PCOS Not Detected',
             'confidence': 0,
             'pcos_probability': 0,
             'error': str(e)
