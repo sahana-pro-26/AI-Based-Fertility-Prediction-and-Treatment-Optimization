@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IVF Prediction Form</title>
+    <title>FertiCare AI - IVF Prediction</title>
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
@@ -13,135 +13,112 @@
             margin:0;
             padding:0;
             font-family: Arial, sans-serif;
-            background: 
-            url("{% static 'bg.png' %}");
+            background: url("{% static 'bg.png' %}");
             background-size:cover;
             background-position:center;
             display:flex;
             flex-direction:column;
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>IVF Prediction Form</title>
+            justify-content:center;
+            align-items:center;
+            min-height:100vh;
+        }
 
-                {% load static %}
-                <link rel="stylesheet" href="{% static 'style.css' %}">
-                <style>
+        h1{
+            text-align:center;
+            margin-bottom:30px;
+            font-size:32px;
+            background:linear-gradient(135deg,#ff4da6,#b85cf6);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
+            z-index:10;
+        }
 
-                    body{
-                        margin:0;
-                        padding:0;
-                        font-family: Arial, sans-serif;
-                        background: 
-                        url("{% static 'bg.png' %}");
-                        background-size:cover;
-                        background-position:center;
-                        display:flex;
-                        flex-direction:column;
-                        justify-content:center;
-                        align-items:center;
-                        min-height:100vh;
-                    }
+        .container{
+            width:450px;
+            background:rgba(30, 95, 116, 0.15);
+            padding:30px;
+            border-radius:20px;
+            border:1px solid rgba(30, 95, 116, 0.3);
+            box-shadow:0 0 20px rgba(30, 95, 116, 0.2), inset 0 0 20px rgba(30, 95, 116, 0.1);
+            color:white;
+            backdrop-filter:blur(10px);
+        }
 
-                    h1{
-                        text-align:center;
-                        margin-bottom:30px;
-                        font-size:32px;
-                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
-                        -webkit-background-clip:text;
-                        -webkit-text-fill-color:transparent;
-                        background-clip:text;
-                        z-index:10;
-                    }
+        label{
+            display:block;
+            margin-top:15px;
+            margin-bottom:5px;
+            font-size:18px;
+            background:linear-gradient(135deg,#ff4da6,#b85cf6);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
+            font-weight:700;
+        }
 
-                    .container{
-                        width:450px;
-                        background:rgba(30, 95, 116, 0.15);
-                        padding:30px;
-                        border-radius:20px;
-                        border:1px solid rgba(30, 95, 116, 0.3);
-                        box-shadow:0 0 20px rgba(30, 95, 116, 0.2), inset 0 0 20px rgba(30, 95, 116, 0.1);
-                        color:white;
-                        backdrop-filter:blur(10px);
-                    }
+        input, select{
+            width:100%;
+            padding:12px;
+            border:1px solid rgba(30, 95, 116, 0.4);
+            border-radius:10px;
+            background:linear-gradient(135deg, rgba(255,77,166,0.1), rgba(184,92,246,0.1));
+            color:#ff4da6;
+            font-size:18px;
+            font-weight:700;
+            box-shadow:0 0 10px rgba(30, 95, 116, 0.2), inset 0 0 5px rgba(30, 95, 116, 0.1);
+            transition:all 0.3s ease;
+        }
 
-                    label{
-                        display:block;
-                        margin-top:15px;
-                        margin-bottom:5px;
-                        font-size:18px;
-                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
-                        -webkit-background-clip:text;
-                        -webkit-text-fill-color:transparent;
-                        background-clip:text;
-                        font-weight:700;
-                    }
+        input::placeholder{
+            color:#ff4da6;
+            opacity:0.7;
+        }
 
-                    input, select{
-                        width:100%;
-                        padding:12px;
-                        border:1px solid rgba(30, 95, 116, 0.4);
-                        border-radius:10px;
-                        background:rgba(30, 95, 116, 0.1);
-                        background:linear-gradient(135deg, rgba(255,77,166,0.1), rgba(184,92,246,0.1));
-                        color:#ff4da6;
-                        font-size:18px;
-                        font-weight:700;
-                        box-shadow:0 0 10px rgba(30, 95, 116, 0.2), inset 0 0 5px rgba(30, 95, 116, 0.1);
-                        transition:all 0.3s ease;
-                    }
+        select::placeholder,
+        option[value=""],
+        option:disabled{
+            color:#B8B8D9;
+        }
 
-                    input::placeholder{
-                        color:#ff4da6;
-                        opacity:0.7;
-                    }
+        option{
+            background:#2B2C63;
+            color:#ff4da6;
+        }
 
-                    select::placeholder,
-                    option[value=""],
-                    option:disabled{
-                        color:#B8B8D9;
-                    }
+        input:focus,
+        select:focus{
+            outline:none;
+            background:rgba(30, 95, 116, 0.2);
+            box-shadow:0 0 20px rgba(30, 95, 116, 0.6), inset 0 0 10px rgba(30, 95, 116, 0.2);
+            border-color:rgba(30, 95, 116, 0.6);
+        }
 
-                    option{
-                        background:#2B2C63;
-                        color:#ff4da6;
-                    }
+        button{
+            width:100%;
+            padding:14px;
+            margin-top:25px;
+            border:2px solid #ff4da6;
+            border-radius:50px;
+            background:linear-gradient(135deg,#ff4da6,#b85cf6);
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+            box-shadow:0 0 15px rgba(255,77,166,0.6);
+        }
 
-                    input:focus,
-                    select:focus{
-                        outline:none;
-                        background:rgba(30, 95, 116, 0.2);
-                        box-shadow:0 0 20px rgba(30, 95, 116, 0.6), inset 0 0 10px rgba(30, 95, 116, 0.2);
-                        border-color:rgba(30, 95, 116, 0.6);
-                    }
+        button:hover{
+            transform:scale(1.03);
+            box-shadow:0 0 25px rgba(255,77,166,0.9);
+        }
 
-                    button{
-                        width:100%;
-                        padding:14px;
-                        margin-top:25px;
-                        border:2px solid #ff4da6;
-                        border-radius:50px;
-                        background:linear-gradient(135deg,#ff4da6,#b85cf6);
-                        color:white;
-                        font-size:16px;
-                        font-weight:bold;
-                        cursor:pointer;
-                        transition:0.3s;
-                        box-shadow:0 0 15px rgba(255,77,166,0.6);
-                    }
+    </style>
+</head>
+<body>
 
-                    button:hover{
-                        transform:scale(1.03);
-                        box-shadow:0 0 25px rgba(255,77,166,0.9);
-                    }
-
-                </style>
-            </head>
-            <body>
-
-            <h1>IVF Prediction Form</h1>
+<h1>IVF Prediction Form</h1>
 
             <div class="container">
 
@@ -157,11 +134,11 @@
                     <label>Height (cm)</label>
                     <input type="number" name="height" required value="{{ form_data.height|default:'' }}">
 
-                    <label>Irregular Periods</label>
+                    <label>Menstrual Cycle</label>
                     <select name="periods">
                         <option value="" disabled {% if not form_data.periods %}selected{% endif %}>Select an option</option>
-                        <option value="Yes" {% if form_data.periods == 'Yes' %}selected{% endif %}>Yes</option>
-                        <option value="No" {% if form_data.periods == 'No' %}selected{% endif %}>No</option>
+                        <option value="Regular" {% if form_data.periods == 'Regular' %}selected{% endif %}>Regular</option>
+                        <option value="Irregular" {% if form_data.periods == 'Irregular' %}selected{% endif %}>Irregular</option>
                     </select>
 
                     <label>PCOS</label>

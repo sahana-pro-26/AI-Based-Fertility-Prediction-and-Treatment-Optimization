@@ -14,7 +14,343 @@ example- 1,2,3,4....."
 45,58,152,11,2,1,0,1,1,0,1,0,1,1,0,2
 38,64,162,11,1,0,0,0,1,0,0,1,0,1,1,4
 21,42,152,11,1,0,0,0,0,1,1,0,0,1,1,5
-34,60,161,13,3,0,0,0,1,0,0,1,0,1,0,5
+34,60,161,13,3,0,0,0,1,0,0,1,0,1,0,5<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PCOS Prediction</title>
+   {% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    font-family: Arial, sans-serif;
+    background: 
+    url("{% static 'bg.png' %}");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    background:#2B2C63;
+    width:380px;
+    padding:30px;
+    border-radius:20px;
+    border:2px solid #7A5AA6;
+    box-shadow:0 0 20px rgba(0,0,0,0.2), 0 0 40px rgba(122,90,166,0.6), inset 0 0 20px rgba(122,90,166,0.2);
+}
+
+h1{
+    text-align:center;
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:25px;
+}
+
+.pcos-form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.pcos-form label{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-align:left;
+}
+
+.field-label{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:16px;
+    font-weight:700;
+    color:#B8B8D9;
+}
+
+.pcos-form input,
+.pcos-form select{
+    width:100%;
+    padding:15px;
+    border:2px solid #7A5AA6;
+    border-radius:12px;
+    background:#2B2C63;
+    color:#B8B8D9;
+    font-size:16px;
+    outline:none;
+    box-shadow:0 0 10px rgba(122,90,166,0.4), inset 0 0 5px rgba(122,90,166,0.1);
+    transition:all 0.3s ease;
+}
+
+.pcos-form input:focus,
+.pcos-form select:focus{
+    box-shadow:0 0 20px rgba(122,90,166,0.8), inset 0 0 10px rgba(122,90,166,0.2);
+}
+
+.pcos-form button{
+    padding:15px;
+    border:2px solid #7A5AA6;
+    border-radius:50px;
+    background:linear-gradient(135deg,#ff4da6,#b85cf6);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 15px rgba(255,77,166,0.6);
+}
+
+.pcos-form button:hover{
+    transform:scale(1.03);
+    box-shadow:0 0 25px rgba(122,90,166,0.9);
+}
+
+.pcos-form input::placeholder,
+.pcos-form select::placeholder{
+    color:#B8B8D9;
+}
+
+.result{
+    text-align:center;
+    margin-top:20px;
+    padding:20px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    display:none;
+    box-shadow:0 0 20px rgba(122,90,166,0.6);
+}
+
+.result.show{
+    display:block;
+    animation:slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity:0;
+        transform:translateY(-10px);
+    }
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.result.positive{
+    background:rgba(255, 77, 166, 0.2);
+    border:2px solid #ff4da6;
+    color:#ff4da6;
+}
+
+.result.at-risk{
+    background:rgba(255, 193, 7, 0.2);
+    border:2px solid #ffc107;
+    color:#ffc107;
+}
+
+.result.negative{
+    background:rgba(122, 90, 166, 0.2);
+    border:2px solid #7A5AA6;
+    color:#B8B8D9;
+}
+
+.result-message{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.result-confidence{
+    font-size:14px;
+    opacity:0.9;
+    margin-top:10px;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>PCOS/PMOS Detection System</h1>
+
+    <form class="pcos-form" id="pcosForm">
+        {% csrf_token %}
+
+        <label>
+            <span class="field-label">🔢 Age</span>
+            <input name="age" type="number" placeholder="Enter Age" required>
+        </label>
+
+        <label>
+            <span class="field-label">⚖️ Weight</span>
+            <input name="weight" type="number" placeholder="Enter Weight" required>
+        </label>
+
+        <label>
+            <span class="field-label">� Weight Change</span>
+            <select name="weight_change" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Weight Gain">Weight Gain</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="No Change">No Change</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">�🔄 Menstrual Cycle</span>
+            <select name="irregular_period" required>
+                <option value="Regular">Regular</option>
+                <option value="Irregular">Irregular</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">💧 Acne Problem</span>
+            <select name="acne_problem" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">🧑‍🦲 Hair Loss</span>
+            <select name="hair_loss" id="hairLoss" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
+
+        <label id="hairLossDetailLabel" style="display:none;">
+            <span class="field-label">Hair Loss Severity</span>
+            <select name="hair_loss_detail" id="hairLossDetail">
+                <option value="" disabled selected>Select an option</option>
+                <option value="Low">Low Hair Loss</option>
+                <option value="Moderate">Moderate Hair Loss</option>
+                <option value="Excess">Excess Hair Loss</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">🧔 Excess Facial Hair</span>
+            <select name="facial_hair" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
+
+        <label>
+            <span class="field-label">😕 Mood Swings</span>
+            <select name="mood_swings" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </label>
+
+        <button type="submit">
+            Predict
+        </button>
+
+    </form>
+
+    <div class="result" id="result"></div>
+
+</html> 
+
+</div>
+
+<script>
+
+document.getElementById("hairLoss").addEventListener("change", function(){
+    const hairLossDetailLabel = document.getElementById("hairLossDetailLabel");
+    const hairLossDetail = document.getElementById("hairLossDetail");
+    
+    if(this.value === "Yes"){
+        hairLossDetailLabel.style.display = "flex";
+        hairLossDetail.required = true;
+    } else {
+        hairLossDetailLabel.style.display = "none";
+        hairLossDetail.required = false;
+        hairLossDetail.value = "";
+    }
+});
+
+document.getElementById("pcosForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const resultDiv = document.getElementById("result");
+    
+    // Show loading state
+    resultDiv.innerHTML = "Analyzing...";
+    resultDiv.classList.add("show");
+    resultDiv.classList.remove("positive", "negative", "at-risk");
+    
+    fetch("{% url 'predict_pcos' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success'){
+            const message = data.message;
+            const confidence = data.confidence;
+            const predictionStatus = data.prediction_status;
+            
+            resultDiv.innerHTML = `
+                <div class="result-message">${message}</div>
+                <div class="result-confidence">Confidence: ${confidence}%</div>
+            `;
+            
+            // Remove all status classes
+            resultDiv.classList.remove('positive', 'negative', 'at-risk');
+            
+            // Add appropriate status class
+            if(predictionStatus === 'PCOS Detected'){
+                resultDiv.classList.add('positive');
+            } else if(predictionStatus === 'At Risk'){
+                resultDiv.classList.add('at-risk');
+            } else {
+                resultDiv.classList.add('negative');
+            }
+        } else {
+            resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error: ${data.message}</div>`;
+            resultDiv.classList.remove('positive', 'negative', 'at-risk');
+            resultDiv.classList.add('negative');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        resultDiv.innerHTML = `<div style="color:#ff6b6b;">Error processing request</div>`;
+        resultDiv.classList.remove('positive', 'negative', 'at-risk');
+        resultDiv.classList.add('negative');
+    });
+});
+
+</script>
+
+</body>
+</html>
+
+
 27,52,154,15,1,0,0,1,0,0,0,0,0,1,1,4
 21,67,153,12,2,1,1,1,1,1,0,1,1,1,0,5
 20,48,167,13,1,0,0,0,1,1,0,1,0,1,1,3

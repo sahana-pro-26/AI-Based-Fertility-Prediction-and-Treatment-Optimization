@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PCOS Prediction</title>
+<title>FertiCare AI - PCOS Prediction</title>
    {% load static %}
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <style>
@@ -186,18 +186,19 @@ h1{
         </label>
 
         <label>
-            <span class="field-label">� Weight Change</span>
+            <span class="field-label">⚖️ Weight Change</span>
             <select name="weight_change" required>
                 <option value="" disabled selected>Select an option</option>
-                <option value="Weight Gain">Weight Gain</option>
-                <option value="Weight Loss">Weight Loss</option>
-                <option value="No Change">No Change</option>
+                <option value="Weight Gain">📈Weight Gain</option>
+                <option value="Weight Loss">📉Weight Loss</option>
+                <option value="No Change">⚪No Change</option>
             </select>
         </label>
 
         <label>
-            <span class="field-label">�🔄 Menstrual Cycle</span>
+            <span class="field-label">🔄 Menstrual Cycle</span>
             <select name="irregular_period" required>
+                <option value="" disabled selected>Select an option</option>
                 <option value="Regular">Regular</option>
                 <option value="Irregular">Irregular</option>
             </select>

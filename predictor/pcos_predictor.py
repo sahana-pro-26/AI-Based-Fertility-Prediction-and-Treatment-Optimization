@@ -56,8 +56,19 @@ def train_pcos_model():
             print(f"Available columns: {df.columns.tolist()}")
             return None, None
         
-        X = df[available_columns].fillna(0)
-        y = df[target_col].fillna(0)
+        X = df[available_columns].copy()
+        # Clean/convert columns to numeric where possible
+        for col in X.columns:
+            X[col] = pd.to_numeric(X[col], errors='coerce')
+            # fallback mapping for yes/no string columns
+            if X[col].isna().sum() > 0:
+                s = df[col].astype(str).str.strip().str.lower()
+                if s.isin(['yes','no','1','0','true','false']).any():
+                    X[col] = s.map({'yes':1,'true':1,'1':1,'no':0,'false':0,'0':0}).fillna(0)
+                else:
+                    X[col] = X[col].fillna(0)
+
+        y = pd.to_numeric(df[target_col], errors='coerce').fillna(0)
         
         # Train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -86,26 +97,16 @@ def train_pcos_model():
 def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, mood_swings, period_regularity):
     """
     Predict PCOS status using trained model
-    
-    Parameters:
-    - age: int
-    - weight: float
-    - weight_gain: 0/1 (No/Yes)
-    - facial_hair: 0/1 (No/Yes)
-    - hair_loss: 0/1 (No/Yes)
-    - acne: 0/1 (No/Yes)
-    - mood_swings: 0/1 (No/Yes)
-    - period_regularity: 0/1 (No/Yes - 1 for regular, 0 for irregular)
     """
-    
+
     try:
         # Load model and scaler
         if not os.path.exists(MODEL_PATH) or not os.path.exists(SCALER_PATH):
             train_pcos_model()
-        
+
         model = pickle.load(open(MODEL_PATH, 'rb'))
         scaler = pickle.load(open(SCALER_PATH, 'rb'))
-        
+
         # Prepare features
         features = np.array([[
             age,
@@ -115,35 +116,33 @@ def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, 
             hair_loss,
             acne,
             mood_swings,
-            1 - period_regularity  # Invert: regular=1 becomes 0, irregular=0 becomes 1
+            1 - period_regularity
         ]])
-        
+
         # Scale features
         features_scaled = scaler.transform(features)
-        
-        # Make prediction
-        prediction = model.predict(features_scaled)[0]
-        probability = model.predict_proba(features_scaled)[0]
-        
-        # Get PCOS probability
-        pcos_prob = float(probability[1]) * 100 if len(probability) > 1 else 0
-        
-        # Determine status based on probability thresholds
+
+        # Random Forest prediction and probability
+        prediction = int(model.predict(features_scaled)[0])
+        proba = model.predict_proba(features_scaled)[0]
+        pcos_prob = float(proba[1]) * 100
+        confidence = float(max(proba)) * 100
+
         if pcos_prob >= 70:
             status = "PCOS Detected"
         elif pcos_prob >= 40:
             status = "At Risk"
         else:
             status = "PCOS Not Detected"
-        
+
         return {
             'prediction': int(prediction),
             'has_pcos': int(prediction == 1),
             'status': status,
-            'confidence': float(max(probability)) * 100,
-            'pcos_probability': pcos_prob
+            'confidence': round(confidence, 2),
+            'pcos_probability': round(pcos_prob, 2)
         }
-        
+
     except Exception as e:
         print(f"Error making prediction: {e}")
         return {

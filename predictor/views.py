@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .pcos_predictor import get_pcos_prediction, train_pcos_model
+from .ivf_predictor import predict_ivf
 
 def home(request):
     return render(request, 'index.html')
@@ -63,6 +64,7 @@ def ivf(request):
     prediction = None
 
     if request.method == 'POST':
+
         form_data = {
             'age': request.POST.get('age', ''),
             'weight': request.POST.get('weight', ''),
@@ -79,37 +81,52 @@ def ivf(request):
             'issues': request.POST.get('issues', ''),
         }
 
-        score = 0
-        try:
-            age = int(form_data['age'])
-        except ValueError:
-            age = None
+        # ----------------------------
+        # CONSISTENT ENCODING (IMPORTANT)
+        # ----------------------------
+        input_data = [
+            float(form_data['age']),
+            float(form_data['weight']),
+            float(form_data['height']),
 
-        if age is not None and age < 35:
-            score += 1
-        if form_data['pcos'] == 'No':
-            score += 1
-        if form_data['periods'] == 'No':
-            score += 1
-        if form_data['stress'] == 'Low':
-            score += 1
-        if form_data['smoking'] == 'No':
-            score += 1
-        if form_data['pregnancy'] == 'Yes':
-            score += 1
-        if form_data['activity'] in ('Active', 'Moderate'):
-            score += 1
-        if form_data['disease'] == 'No':
-            score += 1
-        if form_data['fertility_test'] == 'Yes':
-            score += 1
-        if form_data['issues'] == 'None':
-            score += 1
+            1 if form_data['periods'] == 'Regular' else 0,
+            1 if form_data['pcos'] == 'Yes' else 0,
 
-        prediction = 'Likely to have IVF success' if score >= 4 else 'Less likely to have IVF success'
+            # stress: Low=0, Medium=1, High=2
+            0 if form_data['stress'] == 'Low' else 1 if form_data['stress'] == 'Medium' else 2,
 
-    return render(request, 'ivf.html', {'form_data': form_data, 'prediction': prediction})
+            1 if form_data['smoking'] == 'Yes' else 0,
+            1 if form_data['pregnancy'] == 'Yes' else 0,
 
+            float(form_data['years']),
+
+            1 if form_data['activity'] in ['Active', 'Moderate'] else 0,
+
+            0 if form_data['disease'] == 'Yes' else 1,   # Yes disease = risk (0 better logic)
+
+            1 if form_data['fertility_test'] == 'Yes' else 0,
+            1 if form_data['issues'] == 'None' else 0
+        ]
+
+        # ----------------------------
+        # PREDICTION
+        # ----------------------------
+        result = predict_ivf(input_data)
+        confidence_pct = result['confidence'] * 100
+        success_pct = result['success_probability'] * 100
+
+        if result['label'] == 'High IVF Success':
+            prediction = f"🟢 High IVF Success ({success_pct:.1f}% chance, {confidence_pct:.1f}% confidence)"
+        elif result['label'] == 'Moderate IVF Success':
+            prediction = f"🟡 Moderate IVF Success ({success_pct:.1f}% chance, {confidence_pct:.1f}% confidence)"
+        else:
+            prediction = f"🔴 Low IVF Success ({success_pct:.1f}% chance, {confidence_pct:.1f}% confidence)"
+
+    return render(request, 'ivf.html', {
+        'form_data': form_data,
+        'prediction': prediction
+    })
+    
 def score(request):
     # Render the fertility score page on GET.
     # Handle AJAX POST requests that return a JSON fertility score.
