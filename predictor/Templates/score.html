@@ -6,12 +6,23 @@
 	<title>FertiCare AI - Fertility Score</title>
 	<link rel="stylesheet" href="{% static 'style.css' %}">
 	<style>
-		body, html{margin:0;min-height:100vh;background:url("{% static 'Fertilitybg.png' %}") no-repeat center center/cover;overflow-y:auto}
-		.score-container{max-width:1100px;padding:90px 40px 40px;margin:60px auto;color:#fff;position:relative;overflow:visible;
+		body, html{
+			margin:0;
+			min-height:100vh;
+			padding:24px;
+			background:url("{% static 'Fertilitybg.png' %}") no-repeat center center/cover;
+			background-size:cover;
+			overflow-y:auto;
+			display:flex;
+			justify-content:center;
+			align-items:center;
+		}
+		.score-container{max-width:520px;padding:32px 24px 28px;margin:0 auto;color:#fff;position:relative;overflow:visible;
 			background:rgba(255,255,255,0.16);
 			backdrop-filter:blur(20px);
 			border:1px solid rgba(255,255,255,0.35);
-			box-shadow:0 24px 80px rgba(16, 24, 40, 0.18);
+			box-shadow:0 24px 60px rgba(16, 24, 40, 0.18);
+			border-radius:24px;
 		}
 		.score-heading-row{
 			display:flex;
@@ -25,7 +36,7 @@
 		}
 		.score-container h1{
 			margin:0;
-			font-size:90px;
+			font-size:2.4rem;
 			letter-spacing:0.02em;
 			background:linear-gradient(135deg,#ff4da6,#b85cf6);
 			-webkit-background-clip:text;
@@ -37,13 +48,12 @@
 		}
 		.score-heading-row p{
 			margin:6px 0 0;
-			font-size:28px;
-			line-height:1.2;
-			background:linear-gradient(135deg,#ff4da6,#b85cf6);
-			-webkit-background-clip:text;
-			-webkit-text-fill-color:transparent;
-			background-clip:text;
+			font-size:1rem;
+			line-height:1.5;
+			color:rgba(255,255,255,0.9);
 			text-shadow:0 1px 8px rgba(0,0,0,0.16);
+			max-width:100%;
+			text-align:center;
 		}
 		.pcos-form input,
 		.pcos-form select{
