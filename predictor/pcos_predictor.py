@@ -108,6 +108,8 @@ def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, 
         scaler = pickle.load(open(SCALER_PATH, 'rb'))
 
         # Prepare features
+        # The training data uses 1 for regular periods and 0 for irregular periods,
+        # so we pass period_regularity directly.
         features = np.array([[
             age,
             weight,
@@ -116,7 +118,7 @@ def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, 
             hair_loss,
             acne,
             mood_swings,
-            1 - period_regularity
+            period_regularity
         ]])
 
         # Scale features
@@ -128,7 +130,7 @@ def get_pcos_prediction(age, weight, weight_gain, facial_hair, hair_loss, acne, 
         pcos_prob = float(proba[1]) * 100
         confidence = float(max(proba)) * 100
 
-        if pcos_prob >= 70:
+        if prediction == 1:
             status = "PCOS Detected"
         elif pcos_prob >= 40:
             status = "At Risk"
